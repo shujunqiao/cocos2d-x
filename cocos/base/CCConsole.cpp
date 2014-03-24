@@ -988,6 +988,12 @@ void Console::sendSocket(int fd, std::string str)
     send(fd, str.c_str(), str.length(), 0);
 }
 
+void Console::wait(int t)
+{
+    std::chrono::milliseconds dura( t * 1000 );
+    std::this_thread::sleep_for( dura );
+}
+
 //
 // Main Loop
 //

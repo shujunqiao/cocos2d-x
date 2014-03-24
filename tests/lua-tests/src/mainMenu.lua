@@ -210,3 +210,72 @@ function CreateTestMenu()
 
     return menuLayer
 end
+
+local currentController = nil
+local function onAutotest(fd, args)
+    cclog("fd:%d,str:%s", fd, args)
+    local console = cc.Director:getInstance():getConsole()
+    if(args == "help" or args == "-h") then
+        msg =  "usage: autotest ActionsTest\n\tavailable tests: ";
+        console:sendSocket(fd, msg);
+        console:sendSocket(fd, "\n");
+        local index = 0
+        local obj = nil
+        for index, obj in pairs(_allTests) do
+            console:sendSocket(fd, "\t");
+            console:sendSocket(fd, obj.name);
+            console:sendSocket(fd, "\n");
+        end
+        help_main = "\tmain, return to main menu\n";
+        console:sendSocket(fd, help_main);
+
+        help_next = "\tnext, run next test\n";
+        console:sendSocket(fd, help_next);
+        
+        help_back = "\tback, run prev test\n";
+        console:sendSocket(fd, help_back);
+        
+        help_restart = "\trestart, restart current test\n";
+        console:sendSocket(fd, help_restart);
+        return;
+    end
+    if(args == "main") then
+        local scene = cc.Scene:create()
+        scene:addChild(CreateTestMenu())
+        cc.Director:getInstance():runWithScene(scene)
+    end
+    local sched = cc.Director:getInstance():getScheduler();
+    if(string.find(args, "run")) then
+        cclog("will run.")
+        for index, obj in pairs(_allTests) do
+            local scene = obj
+            cclog("run:%d", index)
+            if scene and scene.isSupported then
+                local msg = "autotest: running test:"
+                msg = msg .. scene.name
+                console:sendSocket(fd, msg)
+                console:sendSocket(fd, "\n")
+
+                currentController = scene
+                cclog(333)
+                local function testThread()
+                    local scene = currentController.create_func()
+                    cclog("in testThread.scene: %p.", scene)
+                    cc.Director:getInstance():replaceScene(scene)
+                end
+                sched:performFunctionInCocosThreadLua(testThread)
+                console:wait(3)
+
+                -- local title = Helper.titleLabel:getString()
+                -- if title then
+                --     cclog("title: %s.", title)
+                -- end
+            end
+        end
+    end
+end
+
+-- add command
+local console = cc.Director:getInstance():getConsole()
+console:listenOnTCP("5678")
+console:addCommand({["name"]="autotest",["help"]="usage: autotest ActionsTest\n\tavailable tests: "}, onAutotest)

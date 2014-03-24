@@ -1668,7 +1668,6 @@ tolua_lerror:
 #endif
 }
 
-
 static int tolua_cocos2d_Scheduler_unscheduleScriptEntry(lua_State* tolua_S)
 {
     if (NULL == tolua_S)
@@ -1713,6 +1712,50 @@ tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'unscheduleScriptEntry'.",&tolua_err);
     return 0;
 #endif
+}
+
+static int tolua_cocos2d_Scheduler_performFunctionInCocosThreadLua(lua_State* tolua_S)
+{
+    if (NULL == tolua_S)
+    return 0;
+    
+    int argc = 0;
+    Scheduler* self = nullptr;
+    
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+	if (!tolua_isusertype(tolua_S,1,"cc.Scheduler",0,&tolua_err)) goto tolua_lerror;
+#endif
+    
+    self = static_cast<cocos2d::Scheduler*>(tolua_tousertype(tolua_S,1,0));
+    
+#if COCOS2D_DEBUG >= 1
+	if (nullptr == self) {
+		tolua_error(tolua_S,"invalid 'self' in function 'tolua_cocos2d_Scheduler_performFunctionInCocosThread'\n", NULL);
+		return 0;
+	}
+#endif
+    
+    argc = lua_gettop(tolua_S) - 1;
+    if (1 == argc) {
+        self = static_cast<cocos2d::Scheduler*>(tolua_tousertype(tolua_S,1,0));
+        int handler = (  toluafix_ref_function(tolua_S,2,0));
+        ScriptHandlerMgr::getInstance()->addObjectHandler((void*)self, handler, ScriptHandlerMgr::HandlerType::SCHEDULE);
+        
+        self->performFunctionInCocosThread([=]{
+             LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
+        });
+        return 0;
+    }
+    CCLOG("'performFunctionInCocosThread' has wrong number of arguments: %d, was expecting %d\n", argc, 1);
+    return 0;
+    
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'performFunctionInCocosThread'.",&tolua_err);
+    return 0;
+#endif
+    return 0;
 }
 
 int tolua_cocos2d_Sequence_create(lua_State* tolua_S)
@@ -3419,6 +3462,9 @@ static void extendScheduler(lua_State* tolua_S)
         lua_pushstring(tolua_S, "unscheduleScriptEntry");
         lua_pushcfunction(tolua_S,tolua_cocos2d_Scheduler_unscheduleScriptEntry);
         lua_rawset(tolua_S, -3);
+        lua_pushstring(tolua_S, "performFunctionInCocosThreadLua");
+        lua_pushcfunction(tolua_S,tolua_cocos2d_Scheduler_performFunctionInCocosThreadLua);
+        lua_rawset(tolua_S, -3);
     }
     lua_pop(tolua_S, 1);
 }
@@ -4790,6 +4836,43 @@ tolua_lerror:
     return 0;
 }
 
+static int lua_cocos2dx_CCConsole_wait(lua_State* tolua_S)
+{
+    cocos2d::Console* cobj = nullptr;
+    int argc = 0;
+    bool ok  = true;
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+    
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.Console",0,&tolua_err)) goto tolua_lerror;
+#endif
+    
+    argc = lua_gettop(tolua_S)-1;
+    
+    if (argc == 1)
+    {
+        int arg0;
+        ok &= luaval_to_int32(tolua_S, 2,&arg0);
+        if(!ok)
+            return 0;
+        cobj = (cocos2d::Console*)tolua_tousertype(tolua_S,1,0);
+        
+        cobj->wait(arg0);
+        return 1;
+    }
+    ok  = true;
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d", "wait",argc, 2);
+    return 0;
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_Console_wait'.",&tolua_err);
+#endif
+    
+    return 0;
+}
+
 static int lua_cocos2dx_CCConsole_listenOnTCP(lua_State* tolua_S)
 {
     cocos2d::Console* cobj = nullptr;
@@ -4888,6 +4971,7 @@ static void extendConsole(lua_State* tolua_S)
     tolua_cclass(tolua_S,"CCConsole","cc.Console","",NULL);
     
     tolua_beginmodule(tolua_S,"CCConsole");
+        tolua_function(tolua_S,"wait", lua_cocos2dx_CCConsole_wait);
         tolua_function(tolua_S,"listenOnTCP", lua_cocos2dx_CCConsole_listenOnTCP);
         tolua_function(tolua_S,"sendSocket", lua_cocos2dx_CCConsole_sendSocket);
         tolua_function(tolua_S,"addCommand", lua_cocos2dx_CCConsole_addCommand);

@@ -98,7 +98,9 @@ public:
     void log(const char *buf);
     /** send socket **/
     void sendSocket(int fd, std::string str);
- 
+    /** wait ts **/
+    void wait(int t);
+    
 protected:
     void loop();
     ssize_t readline(int fd, char *buf, size_t maxlen);

@@ -3874,6 +3874,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1ABCA2F118CD93590087CE3A /* Build configuration list for PBXNativeTarget "lua-tests iOS" */;
 			buildPhases = (
+				D7E00CFF18E00C2D00B43DFF /* ShellScript */,
 				1ABCA2C918CD93580087CE3A /* Sources */,
 				1ABCA2CA18CD93580087CE3A /* Frameworks */,
 				1ABCA2CB18CD93580087CE3A /* Resources */,
@@ -4437,6 +4438,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D7E00CFF18E00C2D00B43DFF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "_TARGET_BUILD_CONTENTS_PATH=$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH\necho TARGET_BUILD_DIR: $TARGET_BUILD_DIR\necho CONTENTS_FOLDER_PATH: $CONTENTS_FOLDER_PATH\necho _TARGET_BUILD_CONTENTS_PATH: $_TARGET_BUILD_CONTENTS_PATH\necho PWD: $PWD\n\necho Cleaning $_TARGET_BUILD_CONTENTS_PATH/\n\nrm -rf $TARGET_BUILD_DIR/lua-tests\\ iOS.app/res/*\nrm -rf $TARGET_BUILD_DIR/lua-tests\\ iOS.app/src/*\n                                        \nmkdir -p $TARGET_BUILD_DIR/lua-tests\\ iOS.app/res/\nmkdir -p $TARGET_BUILD_DIR/lua-tests\\ iOS.app/src/\n                          \ncp -R $PWD/../tests/lua-tests/res/* $TARGET_BUILD_DIR/lua-tests\\ iOS.app/res/\ncp -R $PWD/../tests/lua-tests/src/* $TARGET_BUILD_DIR/lua-tests\\ iOS.app/src/";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1A0EE1F618CDF6DA004CD58F /* Sources */ = {
