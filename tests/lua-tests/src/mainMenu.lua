@@ -266,10 +266,33 @@ local function onAutotest(fd, args)
                 sched:performFunctionInCocosThreadLua(testThread)
                 console:wait(3)
 
-                -- local title = Helper.titleLabel:getString()
-                -- if title then
-                --     cclog("title: %s.", title)
-                -- end
+                if Helper.titleLabel then
+                    -- cclog( "titleLabel type is: %s.", type(Helper.titleLabel) )
+                    -- local title = Helper.titleLabel:getString()
+                    cclog("Helper.index is:%d.", Helper.index)
+                    if Helper.index == index then
+                        cclog("will run---")
+                        while true do
+                            local function testNext()
+                                Helper.nextAction()
+                            end
+                            sched:performFunctionInCocosThreadLua(testNext)
+                            local subtitle = ""
+                            cclog("111")
+                            if Helper.titleLabel ~= nil then
+                                subtitle = subtitle .. Helper.titleLabel:getString()
+                                cclog("222")
+                            end
+                            cclog("333")
+                            if Helper.subtitleLabel ~= nil then
+                                subtitle = subtitle .. subtitleLabel:getString()
+                                cclog("444")
+                            end
+                            cclog("subtitle:%s.", subtitle)
+                            console:wait(2)
+                        end
+                    end
+                end
             end
         end
     end

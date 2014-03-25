@@ -65,9 +65,9 @@ end
 
 
 function AccelerometerMain()
-	cclog("AccelerometerMain")
 	local scene = cc.Scene:create()
 	scene:addChild(AccelerometerMainLayer())
 	scene:addChild(CreateBackMenuItem())
+    cclog("AccelerometerMain, scene:%p.", scene)
 	return scene
 end
