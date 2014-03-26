@@ -444,7 +444,8 @@ end
 function EaseActionsTest()
 	local scene = cc.Scene:create()
 	cclog("EaseActionsTest")
-
+    
+    Helper.curTest = "ActionsEaseTest"
 	Helper.createFunctionTable = {
 		SpriteEase,
 		SpriteEaseInOut,

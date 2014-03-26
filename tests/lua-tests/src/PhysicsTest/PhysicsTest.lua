@@ -1355,7 +1355,8 @@ function PhysicsTest()
 
 
    Helper.usePhysics = true
-   Helper.createFunctionTable = {
+    Helper.curTest = "PhysicsTest"
+    Helper.createFunctionTable = {
       PhysicsDemoLogoSmash,
       PhysicsDemoPyramidStack,
       PhysicsDemoClickAdd,

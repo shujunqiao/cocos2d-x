@@ -637,6 +637,7 @@ function LayerTestMain()
     cc.Director:getInstance():setDepthTest(true)
     local scene = cc.Scene:create()
 
+    Helper.curTest = "LayerTest"
     Helper.createFunctionTable = {
         LayerTestCascadingOpacityA,
         LayerTestCascadingOpacityB,

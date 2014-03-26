@@ -183,6 +183,7 @@ function ActionManagerTestMain()
     cc.Director:getInstance():setDepthTest(true)
     local scene = cc.Scene:create()
 
+    Helper.curTest = "ActionManagerTest"
     Helper.createFunctionTable = {
         CrashTest,
         LogicTest,

@@ -1302,6 +1302,7 @@ function LabelTestNew()
     m_time = 0
     local scene = cc.Scene:create()
 
+    Helper.curTest = "LabelTestNew"
     Helper.createFunctionTable = {
         LabelFNTColorAndOpacity.create,
         LabelFNTSpriteActions.create,

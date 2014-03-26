@@ -168,6 +168,7 @@ end
 function MotionStreakTest()
 	local scene = cc.Scene:create()
 
+    Helper.curTest = "MotionStreakTest"
     Helper.createFunctionTable = {
         MotionStreakTest1,
         MotionStreakTest2,

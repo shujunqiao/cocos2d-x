@@ -601,6 +601,7 @@ function RenderTextureTestMain()
     cclog("RenderTextureTestMain")
     Helper.index = 1
     local scene = cc.Scene:create()
+    Helper.curTest = "RenderTextureTest"
     Helper.createFunctionTable = {
 
         RenderTextureSave,

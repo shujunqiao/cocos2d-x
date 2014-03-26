@@ -1374,6 +1374,7 @@ function LabelTest()
     m_time = 0
     local scene = cc.Scene:create()
 
+    Helper.curTest = "LabelTest"
     Helper.createFunctionTable = {
         LabelAtlasTest.create,
         LabelAtlasColorTest.create,

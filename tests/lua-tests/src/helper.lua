@@ -55,6 +55,7 @@ function CreateBackMenuItem()
 end
 
 Helper = {
+    curTest = nil,
     index = 1,
     createFunctioinTable = nil,
     currentLayer = nil,

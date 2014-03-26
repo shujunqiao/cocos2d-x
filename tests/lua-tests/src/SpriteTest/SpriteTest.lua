@@ -1559,6 +1559,7 @@ end
 function SpriteTest()
 	local scene = cc.Scene:create()
 	
+    Helper.curTest = "SpriteTest"
 	Helper.createFunctionTable = {
         Sprite1.create,
         SpriteBatchNode1.create,

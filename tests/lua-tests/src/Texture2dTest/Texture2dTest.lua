@@ -1378,6 +1378,8 @@ function Texture2dTestMain()
     cclog("Texture2dTestMain")
     Helper.index = 1
     local scene = cc.Scene:create()
+
+    Helper.curTest = "Texture2DTest"
     Helper.createFunctionTable = {
         TextureMemoryAlloc,
         TextureAlias,

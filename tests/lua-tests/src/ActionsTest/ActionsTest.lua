@@ -1242,6 +1242,7 @@ function ActionsTest()
 	cclog("ActionsTest")
 	local scene = cc.Scene:create()
 
+    Helper.curTest = "ActionsTest"
 	Helper.createFunctionTable = {
 		ActionManual,
 		ActionMove,

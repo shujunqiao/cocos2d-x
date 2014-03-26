@@ -212,6 +212,16 @@ function CreateTestMenu()
 end
 
 local currentController = nil
+local function back_toMain()
+    cclog("back_toMain.")
+    local sched = cc.Director:getInstance():getScheduler();
+    local function toMain()
+        local scene = cc.Scene:create()
+        scene:addChild(CreateTestMenu())
+        cc.Director:getInstance():replaceScene(scene)
+    end
+    sched:performFunctionInCocosThreadLua(toMain)
+end
 local function onAutotest(fd, args)
     cclog("fd:%d,str:%s", fd, args)
     local console = cc.Director:getInstance():getConsole()
@@ -240,12 +250,14 @@ local function onAutotest(fd, args)
         return;
     end
     if(args == "main") then
-        local scene = cc.Scene:create()
-        scene:addChild(CreateTestMenu())
-        cc.Director:getInstance():runWithScene(scene)
+        back_toMain()
+        -- local scene = cc.Scene:create()
+        -- scene:addChild(CreateTestMenu())
+        -- cc.Director:getInstance():runWithScene(scene)
     end
     local sched = cc.Director:getInstance():getScheduler();
-    if(string.find(args, "run")) then
+    -- if(string.find(args, "run")) then
+    if(args == "run") then
         cclog("will run.")
         for index, obj in pairs(_allTests) do
             local scene = obj
@@ -266,33 +278,79 @@ local function onAutotest(fd, args)
                 sched:performFunctionInCocosThreadLua(testThread)
                 console:wait(3)
 
-                if Helper.titleLabel then
-                    -- cclog( "titleLabel type is: %s.", type(Helper.titleLabel) )
-                    -- local title = Helper.titleLabel:getString()
-                    cclog("Helper.index is:%d.", Helper.index)
-                    if Helper.index == index then
-                        cclog("will run---")
-                        while true do
-                            local function testNext()
-                                Helper.nextAction()
-                            end
-                            sched:performFunctionInCocosThreadLua(testNext)
-                            local subtitle = ""
-                            cclog("111")
-                            if Helper.titleLabel ~= nil then
-                                subtitle = subtitle .. Helper.titleLabel:getString()
-                                cclog("222")
-                            end
-                            cclog("333")
-                            if Helper.subtitleLabel ~= nil then
-                                subtitle = subtitle .. subtitleLabel:getString()
-                                cclog("444")
-                            end
-                            cclog("subtitle:%s.", subtitle)
-                            console:wait(2)
+                if Helper.curTest ~= nil and Helper.curTest == obj.name then
+                    cclog("will run---%s.", Helper.curTest)
+                    local firTitle = nil
+                    while true do
+                        local function testNext()
+                            Helper.nextAction()
                         end
+                        sched:performFunctionInCocosThreadLua(testNext)
+                        local subtitle = ""
+                        if Helper.titleLabel ~= nil then
+                            subtitle = subtitle .. Helper.titleLabel:getString()
+                        end
+                        if Helper.subtitleLabel ~= nil then
+                            subtitle = subtitle .. Helper.subtitleLabel:getString()
+                        end
+                        if firTitle ~= nil and firTitle == subtitle then
+                            cclog("subtitle:%s.firTitle:%s.", subtitle, firTitle)
+                            console:wait(2)
+                            break
+                        end
+                        if firTitle == nil then
+                            firTitle = subtitle
+                            cclog("firTitle:%s.", firTitle)
+                        end
+                        console:wait(2)
                     end
                 end
+            end
+        end
+    end
+
+    for index, obj in pairs(_allTests) do
+        if args == obj.name then
+            local function runTestByName()
+                local scene = obj.create_func()
+                cclog("in runTestByName.scene: %p.", scene)
+                cc.Director:getInstance():replaceScene(scene)
+            end
+            sched:performFunctionInCocosThreadLua(runTestByName)
+            console:wait(2)
+            cclog("test name is:%s.",obj.name)
+            if Helper.curTest ~= nil and Helper.curTest == obj.name then
+                cclog("will run---%s.", Helper.curTest)
+                local firTitle = nil
+                while true do
+                    local function testNext()
+                        Helper.nextAction()
+                    end
+                    sched:performFunctionInCocosThreadLua(testNext)
+                    local subtitle = ""
+                    if Helper.titleLabel ~= nil then
+                        subtitle = subtitle .. Helper.titleLabel:getString()
+                    end
+                    if Helper.subtitleLabel ~= nil then
+                        subtitle = subtitle .. Helper.subtitleLabel:getString()
+                    end
+                    cclog("subtitle: %s.", subtitle)
+                    if firTitle ~= nil and firTitle == subtitle then
+                        cclog("subtitle:%s.firTitle:%s.", subtitle, firTitle)
+                        console:wait(2)
+                        cclog("need go to main.")
+                        back_toMain()
+                        break
+                    end
+                    if firTitle == nil then
+                        firTitle = subtitle
+                        cclog("firTitle:%s.", firTitle)
+                    end
+                    console:wait(2)
+                end
+            else
+                console:wait(2)
+                back_toMain()
             end
         end
     end

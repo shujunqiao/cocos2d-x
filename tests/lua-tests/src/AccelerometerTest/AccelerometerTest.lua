@@ -63,7 +63,6 @@ local function AccelerometerMainLayer()
     return layer
 end
 
-
 function AccelerometerMain()
 	local scene = cc.Scene:create()
 	scene:addChild(AccelerometerMainLayer())

@@ -1240,6 +1240,7 @@ function TileMapTestMain()
     cc.Director:getInstance():setDepthTest(true)
     local scene = cc.Scene:create()
 
+    Helper.curTest = "TileMapTest"
     Helper.createFunctionTable = {
         TileMapTest,
         TileMapEditTest,

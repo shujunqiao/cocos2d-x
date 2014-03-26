@@ -682,7 +682,8 @@ end
 
 function CocosNodeTest()
 	local scene = cc.Scene:create()
-
+    
+    Helper.curTest = "NodeTest"
     Helper.createFunctionTable = {
         CameraCenterTest,
         Test2,

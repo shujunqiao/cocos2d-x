@@ -7,6 +7,7 @@ local s = cc.Director:getInstance():getWinSize()
 local function SpriteProgressToRadial()
 	local layer = cc.Layer:create()
 	Helper.initWithLayer(layer)
+    Helper.curTest = "ActionsProgressTest"
 
 	local to1 = cc.ProgressTo:create(2, 100)
     local to2 = cc.ProgressTo:create(2, 100)
@@ -281,6 +282,7 @@ end
 function ProgressActionsTest()
 	local scene = cc.Scene:create()
 
+    Helper.curTest = "ActionsProgressTest"
     Helper.createFunctionTable = {
         SpriteProgressToRadial,
         SpriteProgressToHorizontal,

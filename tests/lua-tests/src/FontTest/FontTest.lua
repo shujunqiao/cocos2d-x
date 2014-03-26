@@ -99,6 +99,7 @@ function FontTestMain()
     Helper.index = 1
     vAlignIdx = 1
     local scene = cc.Scene:create()
+    Helper.curTest = "FontTest"
     Helper.createFunctionTable = {
         createTestLayer,
         createTestLayer,
