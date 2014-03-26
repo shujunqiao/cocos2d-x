@@ -352,30 +352,33 @@ function CreateEffectsTestLayer()
 
     local x, y = size.width, size.height
 
-    titleLabel = cc.Label:create(EffectsList[ActionIdx], s_markerFeltFontPath, 32)
-    titleLabel:setAnchorPoint(cc.p(0.5, 0.5))
-    titleLabel:setPosition(x / 2, y - 80)
-    testLayer:addChild(titleLabel)
-    titleLabel:setTag(kTagLabel)
+    -- titleLabel = cc.Label:create(EffectsList[ActionIdx], s_markerFeltFontPath, 32)
+    -- titleLabel:setAnchorPoint(cc.p(0.5, 0.5))
+    -- titleLabel:setPosition(x / 2, y - 80)
+    -- testLayer:addChild(titleLabel)
+    -- titleLabel:setTag(kTagLabel)
 
-    local item1 = cc.MenuItemImage:create(s_pPathB1, s_pPathB2)
-    local item2 = cc.MenuItemImage:create(s_pPathR1, s_pPathR2)
-    local item3 = cc.MenuItemImage:create(s_pPathF1, s_pPathF2)
-    item1:registerScriptTapHandler(backCallback)
-    item2:registerScriptTapHandler(restartCallback)
-    item3:registerScriptTapHandler(nextCallback)
+    -- local item1 = cc.MenuItemImage:create(s_pPathB1, s_pPathB2)
+    -- local item2 = cc.MenuItemImage:create(s_pPathR1, s_pPathR2)
+    -- local item3 = cc.MenuItemImage:create(s_pPathF1, s_pPathF2)
+    -- item1:registerScriptTapHandler(backCallback)
+    -- item2:registerScriptTapHandler(restartCallback)
+    -- item3:registerScriptTapHandler(nextCallback)
 
-    local menu = cc.Menu:create()
-    menu:addChild(item1)
-    menu:addChild(item2)
-    menu:addChild(item3)
+    -- local menu = cc.Menu:create()
+    -- menu:addChild(item1)
+    -- menu:addChild(item2)
+    -- menu:addChild(item3)
 
-    menu:setPosition(cc.p(0, 0))
-    item1:setPosition(cc.p(size.width/2 - item2:getContentSize().width * 2, item2:getContentSize().height / 2))
-    item2:setPosition(cc.p(size.width/2, item2:getContentSize().height / 2))
-    item3:setPosition(cc.p(size.width/2 + item2:getContentSize().width * 2, item2:getContentSize().height / 2))
+    -- menu:setPosition(cc.p(0, 0))
+    -- item1:setPosition(cc.p(size.width/2 - item2:getContentSize().width * 2, item2:getContentSize().height / 2))
+    -- item2:setPosition(cc.p(size.width/2, item2:getContentSize().height / 2))
+    -- item3:setPosition(cc.p(size.width/2 + item2:getContentSize().width * 2, item2:getContentSize().height / 2))
 
-    testLayer:addChild(menu, 1)
+    -- testLayer:addChild(menu, 1)
+
+    Helper.initWithLayer(testLayer)
+    Helper.titleLabel:setString(EffectsList[ActionIdx])
 
     testLayer:registerScriptHandler(onEnterOrExit)
 
@@ -386,6 +389,31 @@ function EffectsTest()
     local scene = cc.Scene:create()
 
     ActionIdx = -1
+    Helper.curTest = "EffectsTest"
+    Helper.createFunctionTable = {
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction,
+        nextAction
+    }
     scene:addChild(nextAction())
     scene:addChild(CreateBackMenuItem())
 

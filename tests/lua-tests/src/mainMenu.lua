@@ -346,7 +346,7 @@ local function onAutotest(fd, args)
                         firTitle = subtitle
                         cclog("firTitle:%s.", firTitle)
                     end
-                    console:wait(2)
+                    console:wait(3.5)
                 end
             else
                 console:wait(2)

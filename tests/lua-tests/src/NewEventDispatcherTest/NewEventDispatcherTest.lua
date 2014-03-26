@@ -140,19 +140,21 @@ function EventDispatcherTestDemo:createMenu()
 end
 
 function EventDispatcherTestDemo:creatTitleAndSubTitle(idx)
-    local title = cc.Label:create(EventDispatcherTestDemo.title(idx),s_arialPath,18)
-    title:setColor(cc.c3b(128,128,0))
-    self:addChild(title, 1, 10000)
-    title:setAnchorPoint(cc.p(0.5, 0.5))
-    title:setPosition( cc.p(VisibleRect:center().x, VisibleRect:top().y - 30))
-    local subTitle = nil
-    if "" ~= EventDispatcherTestDemo.subTitle(idx) then
-        local subTitle = cc.Label:create(EventDispatcherTestDemo.subTitle(idx), s_arialPath, 18)
-        subTitle:setColor(cc.c3b(128,128,0))
-        self:addChild(subTitle, 1, 10001)
-        subTitle:setAnchorPoint(cc.p(0.5, 0.5))
-        subTitle:setPosition( cc.p(VisibleRect:center().x, VisibleRect:top().y - 60) )
-    end
+    -- local title = cc.Label:create(EventDispatcherTestDemo.title(idx),s_arialPath,18)
+    -- title:setColor(cc.c3b(128,128,0))
+    -- self:addChild(title, 1, 10000)
+    -- title:setAnchorPoint(cc.p(0.5, 0.5))
+    -- title:setPosition( cc.p(VisibleRect:center().x, VisibleRect:top().y - 30))
+    -- local subTitle = nil
+    -- if "" ~= EventDispatcherTestDemo.subTitle(idx) then
+    --     local subTitle = cc.Label:create(EventDispatcherTestDemo.subTitle(idx), s_arialPath, 18)
+    --     subTitle:setColor(cc.c3b(128,128,0))
+    --     self:addChild(subTitle, 1, 10001)
+    --     subTitle:setAnchorPoint(cc.p(0.5, 0.5))
+    --     subTitle:setPosition( cc.p(VisibleRect:center().x, VisibleRect:top().y - 60) )
+    -- end
+    Helper.titleLabel:setString(EventDispatcherTestDemo.title(idx))
+    Helper.subtitleLabel:setString(EventDispatcherTestDemo.subTitle(idx))
 end
 
 
@@ -274,9 +276,11 @@ function TouchableSpriteTest.create()
         elseif event == "exit" then
         end
     end
-    
-    layer:createMenu()
+
+    Helper.initWithLayer(layer)
     layer:creatTitleAndSubTitle(curLayerIdx)
+    layer:createMenu()
+
     layer:registerScriptHandler(onNodeEvent)
     return layer
 end
@@ -411,6 +415,7 @@ function FixedPriorityTest.create()
         end
     end
     
+    Helper.initWithLayer(layer)
     layer:createMenu()
     layer:creatTitleAndSubTitle(curLayerIdx)
     layer:registerScriptHandler(onNodeEvent)
@@ -503,6 +508,7 @@ function RemoveListenerWhenDispatchingTest.create()
         end
     end
     
+    Helper.initWithLayer(layer)
     layer:createMenu()
     layer:creatTitleAndSubTitle(curLayerIdx)
     layer:registerScriptHandler(onNodeEvent)
@@ -606,6 +612,7 @@ function CustomEventTest.create()
         end
     end
     
+    Helper.initWithLayer(layer)
     layer:createMenu()
     layer:creatTitleAndSubTitle(curLayerIdx)
     layer:registerScriptHandler(onNodeEvent)
@@ -667,6 +674,7 @@ function LabelKeyboardEventTest.create()
         end
     end
     
+    Helper.initWithLayer(layer)
     layer:createMenu()
     layer:creatTitleAndSubTitle(curLayerIdx)
     layer:registerScriptHandler(onNodeEvent)
@@ -740,6 +748,7 @@ function SpriteAccelerationEventTest.create()
         end
     end
     
+    Helper.initWithLayer(layer)
     layer:createMenu()
     layer:creatTitleAndSubTitle(curLayerIdx)
     layer:registerScriptHandler(onNodeEvent)
@@ -843,6 +852,7 @@ function RemoveAndRetainNodeTest.create()
         end
     end
     
+    Helper.initWithLayer(layer)
     layer:createMenu()
     layer:creatTitleAndSubTitle(curLayerIdx)
     layer:registerScriptHandler(onNodeEvent)
@@ -964,6 +974,7 @@ function RemoveListenerAfterAddingTest.create()
         end
     end
     
+    Helper.initWithLayer(layer)
     layer:createMenu()
     layer:creatTitleAndSubTitle(curLayerIdx)
     layer:registerScriptHandler(onNodeEvent)
@@ -1009,6 +1020,19 @@ end
 function NewEventDispatcherTest()
     local scene = EventDispatcherScene.create()
     curLayerIdx   = testArray.TouchableSprite
+
+    Helper.curTest = "NewEventDispatcherTest"
+    Helper.createFunctionTable = {
+        nextEventDispatcherTest,
+        nextEventDispatcherTest,
+        nextEventDispatcherTest,
+        nextEventDispatcherTest,
+        nextEventDispatcherTest,
+        nextEventDispatcherTest,
+        nextEventDispatcherTest,
+        nextEventDispatcherTest
+    }
+
     scene:addChild(restartEventDispatcherTest())
     scene:addChild(CreateBackMenuItem())
     return scene
