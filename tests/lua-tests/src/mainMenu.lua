@@ -218,12 +218,13 @@ local function back_toMain()
     local function toMain()
         local scene = cc.Scene:create()
         scene:addChild(CreateTestMenu())
+        scene:addChild(CreateBackMenuItem())
         cc.Director:getInstance():replaceScene(scene)
     end
     sched:performFunctionInCocosThreadLua(toMain)
 end
 local function onAutotest(fd, args)
-    cclog("fd:%d,str:%s", fd, args)
+    -- cclog("fd:%d,str:%s", fd, args)
     local console = cc.Director:getInstance():getConsole()
     if(args == "help" or args == "-h") then
         msg =  "usage: autotest ActionsTest\n\tavailable tests: ";
@@ -251,9 +252,6 @@ local function onAutotest(fd, args)
     end
     if(args == "main") then
         back_toMain()
-        -- local scene = cc.Scene:create()
-        -- scene:addChild(CreateTestMenu())
-        -- cc.Director:getInstance():runWithScene(scene)
     end
     local sched = cc.Director:getInstance():getScheduler();
     -- if(string.find(args, "run")) then
@@ -269,17 +267,17 @@ local function onAutotest(fd, args)
                 console:sendSocket(fd, "\n")
 
                 currentController = scene
-                cclog(333)
                 local function testThread()
                     local scene = currentController.create_func()
-                    cclog("in testThread.scene: %p.", scene)
+                    -- cclog("in testThread.scene: %p.", scene)
                     cc.Director:getInstance():replaceScene(scene)
                 end
                 sched:performFunctionInCocosThreadLua(testThread)
                 console:wait(3)
 
                 if Helper.curTest ~= nil and Helper.curTest == obj.name then
-                    cclog("will run---%s.", Helper.curTest)
+                    -- cclog("will run---%s.", Helper.curTest)
+                    -- console:sendSocket(fd, Helper.curTest)
                     local firTitle = nil
                     while true do
                         local function testNext()
@@ -293,14 +291,18 @@ local function onAutotest(fd, args)
                         if Helper.subtitleLabel ~= nil then
                             subtitle = subtitle .. Helper.subtitleLabel:getString()
                         end
+                        console:sendSocket(fd, "\t")
+                        console:sendSocket(fd, subtitle)
+                        console:sendSocket(fd, "\n")
                         if firTitle ~= nil and firTitle == subtitle then
-                            cclog("subtitle:%s.firTitle:%s.", subtitle, firTitle)
+                            -- cclog("subtitle:%s.firTitle:%s.", subtitle, firTitle)
                             console:wait(2)
+                            -- back_toMain()
                             break
                         end
                         if firTitle == nil then
                             firTitle = subtitle
-                            cclog("firTitle:%s.", firTitle)
+                            -- cclog("firTitle:%s.", firTitle)
                         end
                         console:wait(2)
                     end
@@ -313,7 +315,8 @@ local function onAutotest(fd, args)
         if args == obj.name then
             local function runTestByName()
                 local scene = obj.create_func()
-                cclog("in runTestByName.scene: %p.", scene)
+                -- cclog("in runTestByName.scene: %p.", scene)
+                console:sendSocket(fd, scene)
                 cc.Director:getInstance():replaceScene(scene)
             end
             sched:performFunctionInCocosThreadLua(runTestByName)
@@ -334,17 +337,21 @@ local function onAutotest(fd, args)
                     if Helper.subtitleLabel ~= nil then
                         subtitle = subtitle .. Helper.subtitleLabel:getString()
                     end
-                    cclog("subtitle: %s.", subtitle)
+                    -- cclog("subtitle: %s.", subtitle)
+                    console:sendSocket(fd, "\t")
+                    console:sendSocket(fd, subtitle)
+                    console:sendSocket(fd, "\n")
                     if firTitle ~= nil and firTitle == subtitle then
-                        cclog("subtitle:%s.firTitle:%s.", subtitle, firTitle)
+                        -- cclog("subtitle:%s.firTitle:%s.", subtitle, firTitle)
                         console:wait(2)
-                        cclog("need go to main.")
+                        console:sendSocket(fd, "need go to main.")
+                        console:sendSocket(fd, "\n")
                         back_toMain()
                         break
                     end
                     if firTitle == nil then
                         firTitle = subtitle
-                        cclog("firTitle:%s.", firTitle)
+                        -- cclog("firTitle:%s.", firTitle)
                     end
                     console:wait(3.5)
                 end

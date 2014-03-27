@@ -19,6 +19,9 @@ cclog = function(...)
     print(string.format(...))
 end
 
+-- scene tag
+SCENE_TAG = 6321
+
 -- change table to enum type
 function CreateEnumTable(tbl, index)
     local enumTable = {}
@@ -86,14 +89,19 @@ end
 
 function Helper.newScene()
     local scene
-    if Helper.usePhysics then
-       scene = cc.Scene:createWithPhysics()
+    local layer = Helper.createFunctionTable[Helper.index]()
+    if layer:getTag() == SCENE_TAG then
+        scene = layer
     else
-       scene = cc.Scene:create()
+        if Helper.usePhysics then
+           scene = cc.Scene:createWithPhysics()
+        else
+           scene = cc.Scene:create()
+        end
+        Helper.currentLayer = Helper.createFunctionTable[Helper.index]()
+        scene:addChild(Helper.currentLayer)
+        scene:addChild(CreateBackMenuItem())
     end
-    Helper.currentLayer = Helper.createFunctionTable[Helper.index]()
-    scene:addChild(Helper.currentLayer)
-    scene:addChild(CreateBackMenuItem())
 
     cc.Director:getInstance():replaceScene(scene)
 end
@@ -104,12 +112,12 @@ function Helper.initWithLayer(layer)
     local size = cc.Director:getInstance():getWinSize()
     Helper.titleLabel = cc.Label:create("", s_arialPath, 28)
     Helper.titleLabel:setAnchorPoint(cc.p(0.5, 0.5))
-    layer:addChild(Helper.titleLabel, 1)
+    layer:addChild(Helper.titleLabel, 1000)
     Helper.titleLabel:setPosition(size.width / 2, size.height - 50)
 
     Helper.subtitleLabel = cc.Label:create("", s_thonburiPath, 16)
     Helper.subtitleLabel:setAnchorPoint(cc.p(0.5, 0.5))
-    layer:addChild(Helper.subtitleLabel, 1)
+    layer:addChild(Helper.subtitleLabel, 1000)
     Helper.subtitleLabel:setPosition(size.width / 2, size.height - 80)
 
     -- menu
@@ -128,7 +136,7 @@ function Helper.initWithLayer(layer)
     item1:setPosition(cc.p(size.width / 2 - item2:getContentSize().width * 2, item2:getContentSize().height / 2))
     item2:setPosition(cc.p(size.width / 2, item2:getContentSize().height / 2))
     item3:setPosition(cc.p(size.width / 2 + item2:getContentSize().width * 2, item2:getContentSize().height / 2))
-    layer:addChild(menu, 1)
+    layer:addChild(menu, 1000)
 
     local background = cc.Layer:create()
     layer:addChild(background, -10)

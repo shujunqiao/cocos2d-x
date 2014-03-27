@@ -323,14 +323,117 @@ local function createEffect(idx, t)
     return action
 end
 
+function initWithLayer(idx )
+    local layer = cc.Layer:create()
+    local gridNodeTarget = CreateEffectsTestLayer()
+    local effect = createEffect(idx, 3)
+    gridNodeTarget:runAction(effect)
+    layer:addChild(gridNodeTarget, 0, kTagBackground)
+
+    Helper.initWithLayer(layer)
+    Helper.titleLabel:setString(EffectsList[idx])
+
+    layer:registerScriptHandler(onEnterOrExit)
+    return layer
+end
+
+function Shaky3DDemoLayer()
+    ActionIdx = 0
+    return initWithLayer(ActionIdx)
+end
+function Waves3DDemoLayer()
+    ActionIdx = 1
+    return initWithLayer(ActionIdx)
+end
+function FlipX3DDemoLayer()
+    ActionIdx = 2
+    return initWithLayer(ActionIdx)
+end
+function FlipY3DDemoLayer()
+    ActionIdx = 3
+    return initWithLayer(ActionIdx)
+end
+function Lens3DDemoLayer()
+    ActionIdx = 4
+    return initWithLayer(ActionIdx)
+end
+function Ripple3DDemoLayer()
+    ActionIdx = 5
+    return initWithLayer(ActionIdx)
+end
+function LiquidDemoLayer()
+    ActionIdx = 6
+    return initWithLayer(ActionIdx)
+end
+function WavesDemoLayer()
+    ActionIdx = 7
+    return initWithLayer(ActionIdx)
+end
+function TwirlDemoLayer()
+    ActionIdx = 8
+    return initWithLayer(ActionIdx)
+end
+function ShakyTiles3DDemoLayer()
+    ActionIdx = 9
+    return initWithLayer(ActionIdx)
+end
+function ShatteredTiles3DDemoLayer()
+    ActionIdx = 10
+    return initWithLayer(ActionIdx)
+end
+function ShuffleTilesDemoLayer()
+    ActionIdx = 11
+    return initWithLayer(ActionIdx)
+end
+function FadeOutTRTilesDemoLayer()
+    ActionIdx = 12
+    return initWithLayer(ActionIdx)
+end
+function FadeOutBLTilesDemoLayer()
+    ActionIdx = 13
+    return initWithLayer(ActionIdx)
+end
+function FadeOutUpTilesDemoLayer()
+    ActionIdx = 14
+    return initWithLayer(ActionIdx)
+end
+function FadeOutDownTilesDemoLayer()
+    ActionIdx = 15
+    return initWithLayer(ActionIdx)
+end
+function TurnOffTilesDemoLayer()
+    ActionIdx = 16
+    return initWithLayer(ActionIdx)
+end
+function WavesTiles3DDemoLayer()
+    ActionIdx = 17
+    return initWithLayer(ActionIdx)
+end
+function JumpTiles3DDemoLayer()
+    ActionIdx = 18
+    return initWithLayer(ActionIdx)
+end
+function SplitRowsDemoLayer()
+    ActionIdx = 19
+    return initWithLayer(ActionIdx)
+end
+function SplitColsDemoLayer()
+    ActionIdx = 20
+    return initWithLayer(ActionIdx)
+end
+function PageTurn3DDemoLayer()
+    ActionIdx = 21
+    return initWithLayer(ActionIdx)
+end
+
 function CreateEffectsTestLayer()
-    testLayer = cc.LayerColor:create(cc.c4b(32,128,32,255))
+    -- testLayer = cc.LayerColor:create(cc.c4b(32,128,32,255))
 
 
     gridNodeTarget = cc.NodeGrid:create()
-    local effect = createEffect(ActionIdx, 3)
-    gridNodeTarget:runAction(effect)
-    testLayer:addChild(gridNodeTarget, 0, kTagBackground)
+    -- local effect = createEffect(ActionIdx, 3)
+    -- gridNodeTarget:runAction(effect)
+    -- testLayer:addChild(gridNodeTarget, 0, kTagBackground)
     
     local bg = cc.Sprite:create(s_back3)
     gridNodeTarget:addChild(bg, 0)
@@ -350,7 +453,7 @@ function CreateEffectsTestLayer()
     local sc2_back = sc2:reverse()
     tamara:runAction( cc.RepeatForever:create(cc.Sequence:create(sc2, sc2_back)) )
 
-    local x, y = size.width, size.height
+    -- local x, y = size.width, size.height
 
     -- titleLabel = cc.Label:create(EffectsList[ActionIdx], s_markerFeltFontPath, 32)
     -- titleLabel:setAnchorPoint(cc.p(0.5, 0.5))
@@ -377,12 +480,12 @@ function CreateEffectsTestLayer()
 
     -- testLayer:addChild(menu, 1)
 
-    Helper.initWithLayer(testLayer)
-    Helper.titleLabel:setString(EffectsList[ActionIdx])
+    -- Helper.initWithLayer(testLayer)
+    -- Helper.titleLabel:setString(EffectsList[ActionIdx])
 
-    testLayer:registerScriptHandler(onEnterOrExit)
+    -- testLayer:registerScriptHandler(onEnterOrExit)
 
-    return testLayer
+    return gridNodeTarget
 end
 
 function EffectsTest()
@@ -391,30 +494,30 @@ function EffectsTest()
     ActionIdx = -1
     Helper.curTest = "EffectsTest"
     Helper.createFunctionTable = {
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction,
-        nextAction
+        Shaky3DDemoLayer,
+        Waves3DDemoLayer,
+        FlipX3DDemoLayer,
+        FlipY3DDemoLayer,
+        Lens3DDemoLayer,
+        Ripple3DDemoLayer,
+        LiquidDemoLayer,
+        WavesDemoLayer,
+        TwirlDemoLayer,
+        ShakyTiles3DDemoLayer,
+        ShatteredTiles3DDemoLayer,
+        ShuffleTilesDemoLayer,
+        FadeOutTRTilesDemoLayer,
+        FadeOutBLTilesDemoLayer,
+        FadeOutUpTilesDemoLayer,
+        FadeOutDownTilesDemoLayer,
+        TurnOffTilesDemoLayer,
+        WavesTiles3DDemoLayer,
+        JumpTiles3DDemoLayer,
+        SplitRowsDemoLayer,
+        SplitColsDemoLayer,
+        PageTurn3DDemoLayer
     }
-    scene:addChild(nextAction())
+    scene:addChild(Shaky3DDemoLayer())
     scene:addChild(CreateBackMenuItem())
 
     return scene

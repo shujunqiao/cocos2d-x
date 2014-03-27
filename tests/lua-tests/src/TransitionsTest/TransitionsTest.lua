@@ -251,19 +251,203 @@ function generateTranScene()
         layer = createLayer2()
     end
 
+    Helper.initWithLayer(layer)
+    Helper.titleLabel:setString(Transition_Name[SceneIdx])
+    Helper.titleLabel:setVisible(false)
+
     scene:addChild(layer)
     scene:addChild(CreateBackMenuItem())
 
     return createTransition(SceneIdx, TRANSITION_DURATION, scene)
 end
 
+local function getSceneByIdx(idx)
+    SceneIdx = idx
+    switchSceneTypeNo()
+    local scene = generateTranScene()
+    scene:setTag(SCENE_TAG)
+    return scene
+end
+
+local function CCTransitionJumpZoom()
+    return getSceneByIdx(Transition_Table.CCTransitionJumpZoom)
+end
+local function CCTransitionProgressRadialCCW()
+    return getSceneByIdx(Transition_Table.CCTransitionProgressRadialCCW)
+end
+local function CCTransitionProgressRadialCW()
+    return getSceneByIdx(Transition_Table.CCTransitionProgressRadialCW)
+end
+local function CCTransitionProgressHorizontal()
+    return getSceneByIdx(Transition_Table.CCTransitionProgressHorizontal)
+end
+local function CCTransitionProgressVertical()
+    return getSceneByIdx(Transition_Table.CCTransitionProgressVertical)
+end
+local function CCTransitionProgressInOut()
+    return getSceneByIdx(Transition_Table.CCTransitionProgressInOut)
+end
+local function CCTransitionProgressOutIn()
+    return getSceneByIdx(Transition_Table.CCTransitionProgressOutIn)
+end
+local function CCTransitionCrossFade()
+    return getSceneByIdx(Transition_Table.CCTransitionCrossFade)
+end
+local function TransitionPageForward()
+    return getSceneByIdx(Transition_Table.TransitionPageForward)
+end
+local function TransitionPageBackward()
+    return getSceneByIdx(Transition_Table.TransitionPageBackward)
+end
+local function CCTransitionFadeTR()
+    return getSceneByIdx(Transition_Table.CCTransitionFadeTR)
+end
+local function CCTransitionFadeBL()
+    return getSceneByIdx(Transition_Table.CCTransitionFadeBL)
+end
+local function CCTransitionFadeUp()
+    return getSceneByIdx(Transition_Table.CCTransitionFadeUp)
+end
+local function CCTransitionFadeDown()
+    return getSceneByIdx(Transition_Table.CCTransitionFadeDown)
+end
+local function CCTransitionTurnOffTiles()
+    return getSceneByIdx(Transition_Table.CCTransitionTurnOffTiles)
+end
+local function CCTransitionSplitRows()
+    return getSceneByIdx(Transition_Table.CCTransitionSplitRows)
+end
+local function CCTransitionSplitCols()
+    return getSceneByIdx(Transition_Table.CCTransitionSplitCols)
+end
+local function CCTransitionFade()
+    return getSceneByIdx(Transition_Table.CCTransitionFade)
+end
+local function FadeWhiteTransition()
+    return getSceneByIdx(Transition_Table.FadeWhiteTransition)
+end
+local function FlipXLeftOver()
+    return getSceneByIdx(Transition_Table.FlipXLeftOver)
+end
+local function FlipXRightOver()
+    return getSceneByIdx(Transition_Table.FlipXRightOver)
+end
+local function FlipYUpOver()
+    return getSceneByIdx(Transition_Table.FlipYUpOver)
+end
+local function FlipYDownOver()
+    return getSceneByIdx(Transition_Table.FlipYDownOver)
+end
+local function FlipAngularLeftOver()
+    return getSceneByIdx(Transition_Table.FlipAngularLeftOver)
+end
+local function FlipAngularRightOver()
+    return getSceneByIdx(Transition_Table.FlipAngularRightOver)
+end
+local function ZoomFlipXLeftOver()
+    return getSceneByIdx(Transition_Table.ZoomFlipXLeftOver)
+end
+local function ZoomFlipXRightOver()
+    return getSceneByIdx(Transition_Table.ZoomFlipXRightOver)
+end
+local function ZoomFlipYUpOver()
+    return getSceneByIdx(Transition_Table.ZoomFlipYUpOver)
+end
+local function ZoomFlipYDownOver()
+    return getSceneByIdx(Transition_Table.ZoomFlipYDownOver)
+end
+local function ZoomFlipAngularLeftOver()
+    return getSceneByIdx(Transition_Table.ZoomFlipAngularLeftOver)
+end
+local function ZoomFlipAngularRightOver()
+    return getSceneByIdx(Transition_Table.ZoomFlipAngularRightOver)
+end
+local function CCTransitionShrinkGrow()
+    return getSceneByIdx(Transition_Table.CCTransitionShrinkGrow)
+end
+local function CCTransitionRotoZoom()
+    return getSceneByIdx(Transition_Table.CCTransitionRotoZoom)
+end
+local function CCTransitionMoveInL()
+    return getSceneByIdx(Transition_Table.CCTransitionMoveInL)
+end
+local function CCTransitionMoveInR()
+    return getSceneByIdx(Transition_Table.CCTransitionMoveInR)
+end
+local function CCTransitionMoveInT()
+    return getSceneByIdx(Transition_Table.CCTransitionMoveInT)
+end
+local function CCTransitionMoveInB()
+    return getSceneByIdx(Transition_Table.CCTransitionMoveInB)
+end
+local function CCTransitionSlideInL()
+    return getSceneByIdx(Transition_Table.CCTransitionSlideInL)
+end
+local function CCTransitionSlideInR()
+    return getSceneByIdx(Transition_Table.CCTransitionSlideInR)
+end
+local function CCTransitionSlideInT()
+    return getSceneByIdx(Transition_Table.CCTransitionSlideInT)
+end
+local function CCTransitionSlideInB()
+    return getSceneByIdx(Transition_Table.CCTransitionSlideInB)
+end
+
 function TransitionsTest()
     cclog("TransitionsTest")
-    local scene = cc.Scene:create()
+    -- local scene = cc.Scene:create()
 
     SceneIdx = -1
     CurSceneNo = 2
     firstEnter = true
 
-    return nextAction()
+    Helper.curTest = "TransitionsTest"
+    Helper.createFunctionTable = {
+        CCTransitionJumpZoom,
+        CCTransitionProgressRadialCCW,
+        CCTransitionProgressRadialCW,
+        CCTransitionProgressHorizontal,
+        CCTransitionProgressVertical,
+        CCTransitionProgressInOut,
+        CCTransitionProgressOutIn,
+        CCTransitionCrossFade,
+        TransitionPageForward,
+        TransitionPageBackward,
+        CCTransitionFadeTR,
+        CCTransitionFadeBL,
+        CCTransitionFadeUp,
+        CCTransitionFadeDown,
+        CCTransitionTurnOffTiles,
+        CCTransitionSplitRows,
+        CCTransitionSplitCols,
+        CCTransitionFade,
+        FadeWhiteTransition,
+        FlipXLeftOver,
+        FlipXRightOver,
+        FlipYUpOver,
+        FlipYDownOver,
+        FlipAngularLeftOver,
+        FlipAngularRightOver,
+        ZoomFlipXLeftOver,
+        ZoomFlipXRightOver,
+        ZoomFlipYUpOver,
+        ZoomFlipYDownOver,
+        ZoomFlipAngularLeftOver,
+        ZoomFlipAngularRightOver,
+        CCTransitionShrinkGrow,
+        CCTransitionRotoZoom,
+        CCTransitionMoveInL,
+        CCTransitionMoveInR,
+        CCTransitionMoveInT,
+        CCTransitionMoveInB,
+        CCTransitionSlideInL,
+        CCTransitionSlideInR,
+        CCTransitionSlideInT,
+        CCTransitionSlideInB
+    }
+    local scene = (CCTransitionJumpZoom())
+    -- scene:addChild(CreateBackMenuItem())
+
+    return scene
+    -- return nextAction()
 end

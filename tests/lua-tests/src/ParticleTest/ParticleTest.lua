@@ -98,15 +98,15 @@ local function getBaseLayer()
 
     emitter = nil
 
-    titleLabel = cc.Label:create("", s_arialPath, 28)
-    layer:addChild(titleLabel, 100, 1000)
-    titleLabel:setAnchorPoint(cc.p(0.5, 0.5))
-    titleLabel:setPosition(s.width / 2, s.height - 50)
+    -- titleLabel = cc.Label:create("", s_arialPath, 28)
+    -- layer:addChild(titleLabel, 100, 1000)
+    -- titleLabel:setAnchorPoint(cc.p(0.5, 0.5))
+    -- titleLabel:setPosition(s.width / 2, s.height - 50)
 
-    subtitleLabel = cc.Label:create("", s_arialPath, 16)
-    layer:addChild(subtitleLabel, 100)
-    subtitleLabel:setAnchorPoint(cc.p(0.5, 0.5))
-    subtitleLabel:setPosition(s.width / 2, s.height - 80)
+    -- subtitleLabel = cc.Label:create("", s_arialPath, 16)
+    -- layer:addChild(subtitleLabel, 100)
+    -- subtitleLabel:setAnchorPoint(cc.p(0.5, 0.5))
+    -- subtitleLabel:setPosition(s.width / 2, s.height - 80)
 
 
     local item1 = cc.MenuItemImage:create(s_pPathB1, s_pPathB2)
@@ -218,6 +218,12 @@ local function reorderParticles(dt)
     ParticleReorder_Order = ParticleReorder_Order + 1
 end
 
+local function initWithLayer(layer, title, subtitle)
+    Helper.initWithLayer(layer)
+    Helper.titleLabel:setString(title)
+    Helper.subtitleLabel:setString(subtitle)
+end
+
 local function ParticleReorder_onEnterOrExit(tag)
 	local scheduler = cc.Director:getInstance():getScheduler()
 	if tag == "enter" then
@@ -278,8 +284,9 @@ local function ParticleReorder()
 
 	ParticleReorder_layer:registerScriptHandler(ParticleReorder_onEnterOrExit)
 
-	titleLabel:setString("Reordering particles")
-	subtitleLabel:setString("Reordering particles with and without batches batches")
+	-- titleLabel:setString("Reordering particles")
+	-- subtitleLabel:setString("Reordering particles with and without batches batches")
+    initWithLayer(ParticleReorder_layer, "Reordering particles", "Reordering particles with and without batches batches")
 	return ParticleReorder_layer
 end
 
@@ -338,8 +345,9 @@ local function ParticleBatchHybrid()
 
 	layer:registerScriptHandler(ParticleBatchHybrid_onEnterOrExit)
 
-	titleLabel:setString("Particle Batch")
-	subtitleLabel:setString("Hybrid: batched and non batched every 2 seconds")
+	-- titleLabel:setString("Particle Batch")
+	-- subtitleLabel:setString("Hybrid: batched and non batched every 2 seconds")
+    initWithLayer(layer, "Particle Batch", "Hybrid: batched and non batched every 2 seconds")
 	return layer
 end
 
@@ -372,8 +380,9 @@ local function ParticleBatchMultipleEmitters()
 
     layer:addChild(batch, 10)
 
-	titleLabel:setString("Particle Batch")
-	subtitleLabel:setString("Multiple emitters. One Batch")
+	-- titleLabel:setString("Particle Batch")
+	-- subtitleLabel:setString("Multiple emitters. One Batch")
+    initWithLayer(layer, "Particle Batch", "Multiple emitters. One Batch")
 	return layer
 end
 
@@ -390,7 +399,8 @@ local function DemoFlower()
 
     setEmitterPosition()
 
-	titleLabel:setString("ParticleFlower")
+	-- titleLabel:setString("ParticleFlower")
+    initWithLayer(layer, "ParticleFlower", "")
 	return layer
 end
 
@@ -408,7 +418,8 @@ local function DemoGalaxy()
 
     setEmitterPosition()
 
-	titleLabel:setString("ParticleGalaxy")
+	-- titleLabel:setString("ParticleGalaxy")
+    initWithLayer(layer, "ParticleGalaxy", "")
 	return layer
 end
 
@@ -426,7 +437,8 @@ local function DemoFirework()
 
     setEmitterPosition()
 
-	titleLabel:setString("ParticleFireworks")
+	-- titleLabel:setString("ParticleFireworks")
+    initWithLayer(layer, "ParticleFireworks", "")
 	return layer
 end
 
@@ -444,7 +456,8 @@ local function DemoSpiral()
 
     setEmitterPosition()
 
-	titleLabel:setString("ParticleSpiral")
+	-- titleLabel:setString("ParticleSpiral")
+    initWithLayer(layer, "ParticleSpiral", "")
 	return layer
 end
 
@@ -462,7 +475,8 @@ local function DemoSun()
 
     setEmitterPosition()
 
-	titleLabel:setString("ParticleSun")
+	-- titleLabel:setString("ParticleSun")
+    initWithLayer(layer, "ParticleSun", "")
 	return layer
 end
 
@@ -480,7 +494,8 @@ local function DemoMeteor()
 
     setEmitterPosition()
 
-	titleLabel:setString("ParticleMeteor")
+	-- titleLabel:setString("ParticleMeteor")
+    initWithLayer(layer, "ParticleMeteor", "")
 	return layer
 end
 
@@ -498,7 +513,8 @@ local function DemoFire()
     local pos_x, pos_y = emitter:getPosition()
     emitter:setPosition(pos_x, 100)
 
-	titleLabel:setString("ParticleFire")
+	-- titleLabel:setString("ParticleFire")
+    initWithLayer(layer, "ParticleFire", "")
 	return layer
 end
 
@@ -517,7 +533,8 @@ local function DemoSmoke()
 
     setEmitterPosition()
 
-	titleLabel:setString("ParticleSmoke")
+	-- titleLabel:setString("ParticleSmoke")
+    initWithLayer(layer, "ParticleSmoke", "")
 	return layer
 end
 
@@ -537,7 +554,8 @@ local function DemoExplosion()
 
     setEmitterPosition()
 
-	titleLabel:setString("ParticleExplosion")
+	-- titleLabel:setString("ParticleExplosion")
+    initWithLayer(layer, "ParticleExplosion", "")
 	return layer
 end
 
@@ -578,7 +596,8 @@ local function DemoSnow()
 
     setEmitterPosition()
 
-	titleLabel:setString("ParticleSnow")
+	-- titleLabel:setString("ParticleSnow")
+    initWithLayer(layer, "ParticleSnow", "")
 	return layer
 end
 
@@ -599,7 +618,8 @@ local function DemoRain()
 
     setEmitterPosition()
 
-	titleLabel:setString("ParticleRain")
+	-- titleLabel:setString("ParticleRain")
+    initWithLayer(layer, "ParticleRain", "")
 	return layer
 end
 
@@ -668,7 +688,8 @@ local function DemoBigFlower()
 
     setEmitterPosition()
 
-	titleLabel:setString("ParticleBigFlower")
+	-- titleLabel:setString("ParticleBigFlower")
+    initWithLayer(layer, "ParticleBigFlower", "")
 	return layer
 end
 
@@ -739,7 +760,8 @@ local function DemoRotFlower()
 
     setEmitterPosition()
 
-	titleLabel:setString("ParticleRotFlower")
+	-- titleLabel:setString("ParticleRotFlower")
+    initWithLayer(layer, "ParticleRotFlower", "")
 	return layer
 end
 
@@ -807,7 +829,8 @@ local function DemoModernArt()
 
     setEmitterPosition()
 
-	titleLabel:setString("Varying size")
+	-- titleLabel:setString("Varying size")
+    initWithLayer(layer, "Varying size", "")
 	return layer
 end
 
@@ -831,7 +854,8 @@ local function DemoRing()
 
     setEmitterPosition()
 
-	titleLabel:setString("Ring Demo")
+	-- titleLabel:setString("Ring Demo")
+    initWithLayer(layer, "Ring Demo", "")
 	return layer
 end
 
@@ -869,7 +893,8 @@ local function ParallaxParticle()
     local seq = cc.Sequence:create(move, move_back)
     p:runAction(cc.RepeatForever:create(seq))
 
-	titleLabel:setString("Parallax + Particles")
+	-- titleLabel:setString("Parallax + Particles")
+    initWithLayer(layer, "Parallax + Particles", "")
 	return layer
 end
 
@@ -889,7 +914,8 @@ local function DemoParticleFromFile(name)
 
     setEmitterPosition()
 
-	titleLabel:setString(name)
+	-- titleLabel:setString(name)
+    initWithLayer(layer, name, "")
 	return layer
 end
 
@@ -959,7 +985,8 @@ local function RadiusMode1()
     -- additive
     emitter:setBlendAdditive(false)
 
-	titleLabel:setString("Radius Mode: Spiral")
+	-- titleLabel:setString("Radius Mode: Spiral")
+    initWithLayer(layer, "Radius Mode: Spiral", "")
 	return layer
 end
 
@@ -1028,7 +1055,8 @@ local function RadiusMode2()
     -- additive
     emitter:setBlendAdditive(false)
 
-	titleLabel:setString("Radius Mode: Semi Circle")
+	-- titleLabel:setString("Radius Mode: Semi Circle")
+    initWithLayer(layer, "Radius Mode: Semi Circle", "")
 	return layer
 end
 
@@ -1101,8 +1129,9 @@ local function Issue704()
     local rot = cc.RotateBy:create(16, 360)
     emitter:runAction(cc.RepeatForever:create(rot))
 
-	titleLabel:setString("Issue 704. Free + Rot")
-	subtitleLabel:setString("Emitted particles should not rotate")
+	-- titleLabel:setString("Issue 704. Free + Rot")
+	-- subtitleLabel:setString("Emitted particles should not rotate")
+    initWithLayer(layer, "Issue 704. Free + Rot", "Emitted particles should not rotate")
 	return layer
 end
 
@@ -1144,8 +1173,9 @@ local function Issue870()
     Issue870_index = 0
 	layer:registerScriptHandler(Issue870_onEnterOrExit)
 
-	titleLabel:setString("Issue 870. SubRect")
-	subtitleLabel:setString("Every 2 seconds the particle should change")
+	-- titleLabel:setString("Issue 870. SubRect")
+	-- subtitleLabel:setString("Every 2 seconds the particle should change")
+    initWithLayer(layer, "Issue 870. SubRect", "Every 2 seconds the particle should change")
 	return layer
 end
 
@@ -1170,8 +1200,9 @@ local function MultipleParticleSystems()
 
     emitter = nil
 
-	titleLabel:setString("Multiple particle systems")
-	subtitleLabel:setString("v1.1 test: FPS should be lower than next test")
+	-- titleLabel:setString("Multiple particle systems")
+	-- subtitleLabel:setString("v1.1 test: FPS should be lower than next test")
+    initWithLayer(layer, "Multiple particle systems", "v1.1 test: FPS should be lower than next test")
 	return layer
 end
 
@@ -1198,8 +1229,9 @@ local function MultipleParticleSystemsBatched()
 
     emitter = nil
 
-	titleLabel:setString("Multiple particle systems batched")
-	subtitleLabel:setString("v1.1 test: should perform better than previous test")
+	-- titleLabel:setString("Multiple particle systems batched")
+	-- subtitleLabel:setString("v1.1 test: should perform better than previous test")
+    initWithLayer(layer, "Multiple particle systems batched", "v1.1 test: should perform better than previous test")
 	return layer
 end
 
@@ -1268,8 +1300,9 @@ local function AddAndDeleteParticleSystems()
     layer:registerScriptHandler(AddAndDeleteParticleSystems_onEnterOrExit)
     emitter = nil
 
-	titleLabel:setString("Add and remove Particle System")
-	subtitleLabel:setString("v1.1 test: every 2 sec 1 system disappear, 1 appears")
+	-- titleLabel:setString("Add and remove Particle System")
+	-- subtitleLabel:setString("v1.1 test: every 2 sec 1 system disappear, 1 appears")
+    initWithLayer(layer, "Add and remove Particle System", "v1.1 test: every 2 sec 1 system disappear, 1 appears")
 	return layer
 end
 
@@ -1384,8 +1417,9 @@ local function ReorderParticleSystems()
     layer:registerScriptHandler(ReorderParticleSystems_onEnterOrExit)
     emitter = nil
 
-	titleLabel:setString("reorder systems")
-	subtitleLabel:setString("changes every 2 seconds")
+	-- titleLabel:setString("reorder systems")
+	-- subtitleLabel:setString("changes every 2 seconds")
+    initWithLayer(layer, "reorder systems", "changes every 2 seconds")
 	return layer
 end
 
@@ -1414,6 +1448,7 @@ local function PremultipliedAlphaTest()
 
 	titleLabel:setString("premultiplied alpha")
 	subtitleLabel:setString("no black halo, particles should fade out")
+    initWithLayer(layer, "premultiplied alpha", "no black halo, particles should fade out")
 	return layer
 end
 
@@ -1430,8 +1465,9 @@ local function PremultipliedAlphaTest2()
     emitter = cc.ParticleSystemQuad:create("Particles/TestPremultipliedAlpha.plist")
     layer:addChild(emitter ,10)
 
-	titleLabel:setString("premultiplied alpha 2")
-	subtitleLabel:setString("Arrows should be faded")
+	-- titleLabel:setString("premultiplied alpha 2")
+	-- subtitleLabel:setString("Arrows should be faded")
+    initWithLayer(layer, "premultiplied alpha 2", "Arrows should be faded")
 	return layer
 end
 
@@ -1487,12 +1523,102 @@ function CreateParticleLayer()
 	end
 end
 
+function DemoParticleFromFileBoilingFoam( )
+    return DemoParticleFromFile("BoilingFoam")
+end
+function DemoParticleFromFileBurstPipe()
+    return DemoParticleFromFile("BurstPipe")
+end
+function DemoParticleFromFileComet()
+    return DemoParticleFromFile("Comet")
+end
+function DemoParticleFromFiledebian()
+    return DemoParticleFromFile("debian")
+end
+function DemoParticleFromFileExplodingRing()
+    return DemoParticleFromFile("ExplodingRing")
+end
+function DemoParticleFromFileLavaFlow()
+    return DemoParticleFromFile("LavaFlow")
+end
+function DemoParticleFromFileSpinningPeas()
+    return DemoParticleFromFile("SpinningPeas")
+end
+function DemoParticleFromFileSpookyPeas()
+    return DemoParticleFromFile("SpookyPeas")
+end
+function DemoParticleFromFileUpsidedown()
+    return DemoParticleFromFile("Upsidedown")
+end
+function DemoParticleFromFileFlower()
+    return DemoParticleFromFile("Flower")
+end
+function DemoParticleFromFileSpiral()
+    return DemoParticleFromFile("Spiral")
+end
+function DemoParticleFromFileGalaxy()
+    return DemoParticleFromFile("Galaxy")
+end
+function DemoParticleFromFilePhoenix()
+    return DemoParticleFromFile("Phoenix")
+end
+function DemoParticleFromFilelines()
+    return DemoParticleFromFile("lines")
+end
+
 function ParticleTest()
 	cclog("ParticleTest")
 	local scene = cc.Scene:create()
 
-	SceneIdx = -1
-	scene:addChild(nextAction())
+    Helper.curTest = "ParticleTest"
+    Helper.createFunctionTable = {
+        ParticleReorder,
+        ParticleBatchHybrid,
+        ParticleBatchMultipleEmitters,
+        DemoFlower,
+        DemoGalaxy,
+        DemoFirework,
+        DemoSpiral,
+        DemoSun,
+        DemoMeteor,
+        DemoFire,
+        DemoSmoke,
+        DemoExplosion,
+        DemoSnow,
+        DemoRain,
+        DemoBigFlower,
+        DemoRotFlower,
+        DemoModernArt,
+        DemoRing,
+        ParallaxParticle,
+        DemoParticleFromFileBoilingFoam,
+        DemoParticleFromFileBurstPipe,
+        DemoParticleFromFileComet,
+        DemoParticleFromFiledebian,
+        DemoParticleFromFileExplodingRing,
+        DemoParticleFromFileLavaFlow,
+        DemoParticleFromFileSpinningPeas,
+        DemoParticleFromFileSpookyPeas,
+        DemoParticleFromFileUpsidedown,
+        DemoParticleFromFileFlower,
+        DemoParticleFromFileSpiral,
+        DemoParticleFromFileGalaxy,
+        DemoParticleFromFilePhoenix,
+        DemoParticleFromFilelines,
+        RadiusMode1,
+        RadiusMode2,
+        Issue704,
+        Issue870,
+        MultipleParticleSystems,
+        MultipleParticleSystemsBatched,
+        AddAndDeleteParticleSystems,
+        ReorderParticleSystems,
+        PremultipliedAlphaTest,
+        PremultipliedAlphaTest2
+    }
+	-- SceneIdx = -1
+	-- scene:addChild(nextAction())
+    scene:addChild(ParticleReorder())
 	scene:addChild(CreateBackMenuItem())
 
 	return scene

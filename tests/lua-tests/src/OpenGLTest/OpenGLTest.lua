@@ -2295,7 +2295,6 @@ local function backCallback()
     if curCase < 0 then
         curCase = curCase + maxCases
     end
-    cclog("back curCase is:%d", curCase)
     return ShowCurrentTest()
 end
 
@@ -2306,7 +2305,6 @@ end
 local function nextCallback()
     curCase = curCase + 1
     curCase = curCase % maxCases
-    cclog("next curCase is:%d", curCase)
     return ShowCurrentTest()
 end
 
@@ -2324,28 +2322,28 @@ end
 
 function OpenGLTestMain()
     local scene = cc.Scene:create()
-    -- Helper.curTest = "OpenGLTest"
-    -- Helper.createFunctionTable = {
-    --     createShaderRetroEffect,
-    --     createShaderMajoriTest,
-    --     createShaderMandelbrotTest,
-    --     createShaderHeartTest,
-    --     createShaderPlasmaTest,
-    --     createShaderFlowerTest,
-    --     createShaderJuliaTest,
-    --     createGLGetActiveTest,
-    --     createTexImage2DTest,
-    --     CreateSupportedExtensionsLayer,
-    --     CreateReadPixelsTest,
-    --     createClearTest,
-    --     createNodeWebGLAPITest,
-    --     createGLNodeCCAPITest,
-    --     createGLTexParamterTest,
-    --     createGetUniformTest
-    -- }
-    -- scene:addChild(createShaderRetroEffect())
+    Helper.curTest = "OpenGLTest"
+    Helper.createFunctionTable = {
+        createShaderRetroEffect,
+        createShaderMajoriTest,
+        createShaderMandelbrotTest,
+        createShaderHeartTest,
+        createShaderPlasmaTest,
+        createShaderFlowerTest,
+        createShaderJuliaTest,
+        createGLGetActiveTest,
+        createTexImage2DTest,
+        CreateSupportedExtensionsLayer,
+        CreateReadPixelsTest,
+        createClearTest,
+        createNodeWebGLAPITest,
+        createGLNodeCCAPITest,
+        createGLTexParamterTest,
+        createGetUniformTest
+    }
+    scene:addChild(createShaderRetroEffect())
     
-    scene:addChild(OpenGLTestMainLayer())
+    -- scene:addChild(OpenGLTestMainLayer())
     scene:addChild(CreateBackMenuItem())
     return scene
 end
