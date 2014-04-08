@@ -34,6 +34,7 @@ THE SOFTWARE.
 #include "CCRef.h"
 #include "CCGL.h"
 #include "kazmath/kazmath.h"
+#include <set>
 
 NS_CC_BEGIN
 
@@ -292,6 +293,8 @@ private:
         // handy way to initialize the bitfield
         flag_struct() { memset(this, 0, sizeof(*this)); }
     } _flags;
+public:
+    static const GLuint _maxMaterialIDNumber;
 };
 
 // end of shaders group

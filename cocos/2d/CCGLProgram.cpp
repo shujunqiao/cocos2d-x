@@ -84,6 +84,7 @@ const char* GLProgram::ATTRIBUTE_NAME_COLOR = "a_color";
 const char* GLProgram::ATTRIBUTE_NAME_POSITION = "a_position";
 const char* GLProgram::ATTRIBUTE_NAME_TEX_COORD = "a_texCoord";
 
+
 GLProgram::GLProgram()
 : _program(0)
 , _vertShader(0)
