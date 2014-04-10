@@ -228,26 +228,26 @@ local function onAutotest(fd, args)
     local console = cc.Director:getInstance():getConsole()
     if(args == "help" or args == "-h") then
         msg =  "usage: autotest ActionsTest\n\tavailable tests: ";
-        console:sendSocket(fd, msg);
-        console:sendSocket(fd, "\n");
+        console:send(fd, msg);
+        console:send(fd, "\n");
         local index = 0
         local obj = nil
         for index, obj in pairs(_allTests) do
-            console:sendSocket(fd, "\t");
-            console:sendSocket(fd, obj.name);
-            console:sendSocket(fd, "\n");
+            console:send(fd, "\t");
+            console:send(fd, obj.name);
+            console:send(fd, "\n");
         end
         help_main = "\tmain, return to main menu\n";
-        console:sendSocket(fd, help_main);
+        console:send(fd, help_main);
 
         help_next = "\tnext, run next test\n";
-        console:sendSocket(fd, help_next);
+        console:send(fd, help_next);
         
         help_back = "\tback, run prev test\n";
-        console:sendSocket(fd, help_back);
+        console:send(fd, help_back);
         
         help_restart = "\trestart, restart current test\n";
-        console:sendSocket(fd, help_restart);
+        console:send(fd, help_restart);
         return;
     end
     if(args == "main") then
@@ -263,8 +263,8 @@ local function onAutotest(fd, args)
             if scene and scene.isSupported then
                 local msg = "autotest: running test:"
                 msg = msg .. scene.name
-                console:sendSocket(fd, msg)
-                console:sendSocket(fd, "\n")
+                console:send(fd, msg)
+                console:send(fd, "\n")
 
                 currentController = scene
                 local function testThread()
@@ -277,7 +277,7 @@ local function onAutotest(fd, args)
 
                 if Helper.curTest ~= nil and Helper.curTest == obj.name then
                     -- cclog("will run---%s.", Helper.curTest)
-                    -- console:sendSocket(fd, Helper.curTest)
+                    -- console:send(fd, Helper.curTest)
                     local firTitle = nil
                     while true do
                         local function testNext()
@@ -291,9 +291,9 @@ local function onAutotest(fd, args)
                         if Helper.subtitleLabel ~= nil then
                             subtitle = subtitle .. Helper.subtitleLabel:getString()
                         end
-                        console:sendSocket(fd, "\t")
-                        console:sendSocket(fd, subtitle)
-                        console:sendSocket(fd, "\n")
+                        console:send(fd, "\t")
+                        console:send(fd, subtitle)
+                        console:send(fd, "\n")
                         if firTitle ~= nil and firTitle == subtitle then
                             -- cclog("subtitle:%s.firTitle:%s.", subtitle, firTitle)
                             console:wait(2)
@@ -316,7 +316,7 @@ local function onAutotest(fd, args)
             local function runTestByName()
                 local scene = obj.create_func()
                 -- cclog("in runTestByName.scene: %p.", scene)
-                console:sendSocket(fd, scene)
+                console:send(fd, scene)
                 cc.Director:getInstance():replaceScene(scene)
             end
             sched:performFunctionInCocosThreadLua(runTestByName)
@@ -338,14 +338,14 @@ local function onAutotest(fd, args)
                         subtitle = subtitle .. Helper.subtitleLabel:getString()
                     end
                     -- cclog("subtitle: %s.", subtitle)
-                    console:sendSocket(fd, "\t")
-                    console:sendSocket(fd, subtitle)
-                    console:sendSocket(fd, "\n")
+                    console:send(fd, "\t")
+                    console:send(fd, subtitle)
+                    console:send(fd, "\n")
                     if firTitle ~= nil and firTitle == subtitle then
                         -- cclog("subtitle:%s.firTitle:%s.", subtitle, firTitle)
                         console:wait(2)
-                        console:sendSocket(fd, "need go to main.")
-                        console:sendSocket(fd, "\n")
+                        console:send(fd, "need go to main.")
+                        console:send(fd, "\n")
                         back_toMain()
                         break
                     end
@@ -365,5 +365,5 @@ end
 
 -- add command
 local console = cc.Director:getInstance():getConsole()
-console:listenOnTCP("5678")
+-- console:listenOnTCP("5678")
 console:addCommand({["name"]="autotest",["help"]="usage: autotest ActionsTest\n\tavailable tests: "}, onAutotest)
