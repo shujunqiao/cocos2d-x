@@ -406,6 +406,12 @@ void TestController::addConsoleAutoTest()
                             break;
                         }
                     }
+                    //send end information.
+                    if ( i == g_testCount-1 )
+                    {
+                        std::string strEnd = "TestEnd";
+                        send(fd, strEnd.c_str(), strEnd.length(), 0);
+                    }
                 }
                 return;
             }
