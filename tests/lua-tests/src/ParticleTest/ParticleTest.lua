@@ -108,7 +108,6 @@ local function getBaseLayer()
     -- subtitleLabel:setAnchorPoint(cc.p(0.5, 0.5))
     -- subtitleLabel:setPosition(s.width / 2, s.height - 80)
 
-
     local item1 = cc.MenuItemImage:create(s_pPathB1, s_pPathB2)
     local item2 = cc.MenuItemImage:create(s_pPathR1, s_pPathR2)
     local item3 = cc.MenuItemImage:create(s_pPathF1, s_pPathF2)
