@@ -221,8 +221,8 @@ local function back_toMain()
         scene:addChild(CreateBackMenuItem())
         cc.Director:getInstance():replaceScene(scene)
     end
-    --sched:performFunctionInCocosThreadLua(toMain)
-    toMain()
+    sched:performFunctionInCocosThreadLua(toMain)
+    --toMain()
 end
 local function onAutotest(fd, args)
     -- cclog("fd:%d,str:%s", fd, args)
@@ -273,8 +273,8 @@ local function onAutotest(fd, args)
                     -- cclog("in testThread.scene: %p.", scene)
                     cc.Director:getInstance():replaceScene(scene)
                 end
-                --sched:performFunctionInCocosThreadLua(testThread)
-                testThread()
+                sched:performFunctionInCocosThreadLua(testThread)
+                --testThread()
                 console:wait(3)
 
                 if Helper.curTest ~= nil and Helper.curTest == obj.name then
@@ -322,9 +322,9 @@ local function onAutotest(fd, args)
                 -- console:send(fd, scene)
                 cc.Director:getInstance():replaceScene(scene)
             end
-            --sched:performFunctionInCocosThreadLua(runTestByName)
-            cclog("will run test by name.")
-            runTestByName()
+            sched:performFunctionInCocosThreadLua(runTestByName)
+            --cclog("will run test by name.")
+            --runTestByName()
             console:wait(2)
             cclog("test name is:%s.",obj.name)
             if Helper.curTest ~= nil and Helper.curTest == obj.name then
@@ -334,8 +334,8 @@ local function onAutotest(fd, args)
                     local function testNext()
                         Helper.nextAction()
                     end
-                    --sched:performFunctionInCocosThreadLua(testNext)
-                    testNext()
+                    sched:performFunctionInCocosThreadLua(testNext)
+                    --testNext()
                     local subtitle = ""
                     if Helper.titleLabel ~= nil then
                         subtitle = subtitle .. Helper.titleLabel:getString()
