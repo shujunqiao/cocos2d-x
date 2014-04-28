@@ -4,7 +4,7 @@
 #include "cocos2d.h"
 #include "../testBasic.h"
 #include "../BaseTest.h"
-#include "renderer/CCCustomCommand.h"
+#include "2d/renderer/CCCustomCommand.h"
 
 class RenderTextureTest : public BaseTest
 {
@@ -86,7 +86,7 @@ public:
     virtual ~RenderTextureTestDepthStencil();
     virtual std::string title() const override;
     virtual std::string subtitle() const override;
-    virtual void draw(Renderer *renderer, const kmMat4 &transform, bool transformUpdated) override;
+    virtual void draw(Renderer *renderer, const Matrix &transform, bool transformUpdated) override;
 private:
     CustomCommand _renderCmds[4];
     void onBeforeClear();
@@ -139,14 +139,10 @@ public:
     public:
         static SimpleSprite* create(const char* filename, const Rect &rect);
         SimpleSprite();
-        virtual void draw(Renderer *renderer, const kmMat4 &transform, bool transformUpdated);
-        
-    protected:
-        void onBeforeDraw();
+        ~SimpleSprite();
+        virtual void draw(Renderer *renderer, const Matrix &transform, bool transformUpdated);
     public:
         RenderTexture *_rt;
-    protected:
-        CustomCommand _customCommand;
     };
         
 public:
@@ -157,7 +153,7 @@ public:
     virtual std::string title() const override;
     virtual std::string subtitle() const override;
     
-    SimpleSprite* addNewSpriteWithCoords(const Point& p);
+    SimpleSprite* addNewSpriteWithCoords(const Vector2& p);
 };
 
 #endif

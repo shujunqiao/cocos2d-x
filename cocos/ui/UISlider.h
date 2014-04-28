@@ -183,8 +183,8 @@ public:
     virtual void onTouchEnded(Touch *touch, Event *unusedEvent) override;
     virtual void onTouchCancelled(Touch *touch, Event *unusedEvent) override;
     
-    //override "getContentSize" method of widget.
-    virtual const Size& getContentSize() const override;
+    //override "getVirtualRendererSize" method of widget.
+    virtual const Size& getVirtualRendererSize() const override;
     
     //override "getVirtualRenderer" method of widget.
     virtual Node* getVirtualRenderer() override;
@@ -193,7 +193,7 @@ public:
     virtual void ignoreContentAdaptWithSize(bool ignore) override;
     
     //override the widget's hitTest function to perfom its own
-    virtual bool hitTest(const Point &pt) override;
+    virtual bool hitTest(const Vector2 &pt) override;
     /**
      * Returns the "class name" of widget.
      */
@@ -217,6 +217,7 @@ protected:
     void progressBarRendererScaleChangedWithSize();
     virtual Widget* createCloneInstance() override;
     virtual void copySpecialProperties(Widget* model) override;
+    virtual void adaptRenderers() override;
 protected:
     Node*  _barRenderer;
     Node* _progressBarRenderer;
@@ -248,6 +249,8 @@ protected:
     TextureResType _ballNTexType;
     TextureResType _ballPTexType;
     TextureResType _ballDTexType;
+    bool _barRendererAdaptDirty;
+    bool _progressBarRendererDirty;
 };
 
 }

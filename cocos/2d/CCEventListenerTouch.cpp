@@ -22,9 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "CCEventListenerTouch.h"
-#include "CCEventDispatcher.h"
-#include "CCEventTouch.h"
+#include "2d/CCEventListenerTouch.h"
+#include "2d/CCEventDispatcher.h"
+#include "2d/CCEventTouch.h"
 
 #include <algorithm>
 
@@ -82,6 +82,8 @@ EventListenerTouchOneByOne* EventListenerTouchOneByOne::create()
 
 bool EventListenerTouchOneByOne::checkAvailable()
 {
+    // EventDispatcher will use the return value of 'onTouchBegan' to determine whether to pass following 'move', 'end'
+    // message to 'EventListenerTouchOneByOne' or not. So 'onTouchBegan' needs to be set.
     if (onTouchBegan == nullptr)
     {
         CCASSERT(false, "Invalid EventListenerTouchOneByOne!");

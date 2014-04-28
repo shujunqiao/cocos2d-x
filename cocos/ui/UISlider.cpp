@@ -60,7 +60,9 @@ _barTexType(UI_TEX_TYPE_LOCAL),
 _progressBarTexType(UI_TEX_TYPE_LOCAL),
 _ballNTexType(UI_TEX_TYPE_LOCAL),
 _ballPTexType(UI_TEX_TYPE_LOCAL),
-_ballDTexType(UI_TEX_TYPE_LOCAL)
+_ballDTexType(UI_TEX_TYPE_LOCAL),
+_barRendererAdaptDirty(true),
+_progressBarRendererDirty(true)
 {
 }
 
@@ -96,7 +98,7 @@ void Slider::initRenderer()
 {
     _barRenderer = Sprite::create();
     _progressBarRenderer = Sprite::create();
-    _progressBarRenderer->setAnchorPoint(Point(0.0f, 0.5f));
+    _progressBarRenderer->setAnchorPoint(Vector2(0.0f, 0.5f));
     addProtectedChild(_barRenderer, BASEBAR_RENDERER_Z, -1);
     addProtectedChild(_progressBarRenderer, PROGRESSBAR_RENDERER_Z, -1);
     _slidBallNormalRenderer = Sprite::create();
@@ -145,8 +147,9 @@ void Slider::loadBarTexture(const std::string& fileName, TextureResType texType)
             break;
     }
     updateRGBAToRenderer(_barRenderer);
-    barRendererScaleChangedWithSize();
-    progressBarRendererScaleChangedWithSize();
+    _barRendererAdaptDirty = true;
+    _progressBarRendererDirty = true;
+    updateContentSizeWithTextureSize(_barRenderer->getContentSize());
 }
 
 void Slider::loadProgressBarTexture(const std::string& fileName, TextureResType texType)
@@ -183,9 +186,9 @@ void Slider::loadProgressBarTexture(const std::string& fileName, TextureResType 
             break;
     }
     updateRGBAToRenderer(_progressBarRenderer);
-    _progressBarRenderer->setAnchorPoint(Point(0.0f, 0.5f));
+    _progressBarRenderer->setAnchorPoint(Vector2(0.0f, 0.5f));
     _progressBarTextureSize = _progressBarRenderer->getContentSize();
-    progressBarRendererScaleChangedWithSize();
+    _progressBarRendererDirty = true;
 }
 
 void Slider::setScale9Enabled(bool able)
@@ -364,7 +367,7 @@ void Slider::setPercent(int percent)
     _percent = percent;
     float res = percent / 100.0f;
     float dis = _barLength * res;
-    _slidBallRenderer->setPosition(Point(-_barLength/2.0f + dis, 0.0f));
+    _slidBallRenderer->setPosition(Vector2(dis, _contentSize.height / 2.0f));
     if (_scale9Enabled)
     {
         static_cast<extension::Scale9Sprite*>(_progressBarRenderer)->setPreferredSize(Size(dis,_progressBarTextureSize.height));
@@ -378,10 +381,11 @@ void Slider::setPercent(int percent)
     }
 }
     
-bool Slider::hitTest(const cocos2d::Point &pt)
+bool Slider::hitTest(const cocos2d::Vector2 &pt)
 {
-    Point nsp = this->_slidBallNormalRenderer->convertToNodeSpace(pt);
-    Rect ballRect = this->_slidBallNormalRenderer->getTextureRect();
+    Vector2 nsp = this->_slidBallNormalRenderer->convertToNodeSpace(pt);
+    Size ballSize = this->_slidBallNormalRenderer->getContentSize();
+    Rect ballRect = Rect(0,0, ballSize.width, ballSize.height);
     if (ballRect.containsPoint(nsp)) {
         return true;
     }
@@ -393,7 +397,7 @@ bool Slider::onTouchBegan(Touch *touch, Event *unusedEvent)
     bool pass = Widget::onTouchBegan(touch, unusedEvent);
     if (_hitted)
     {
-        Point nsp = convertToNodeSpace(_touchStartPos);
+        Vector2 nsp = convertToNodeSpace(_touchStartPos);
         setPercent(getPercentWithBallPos(nsp.x));
         percentChangedEvent();
     }
@@ -403,8 +407,7 @@ bool Slider::onTouchBegan(Touch *touch, Event *unusedEvent)
 void Slider::onTouchMoved(Touch *touch, Event *unusedEvent)
 {
     _touchMovePos = touch->getLocation();
-    Point nsp = convertToNodeSpace(_touchMovePos);
-    _slidBallRenderer->setPosition(Point(nsp.x,0));
+    Vector2 nsp = convertToNodeSpace(_touchMovePos);
     setPercent(getPercentWithBallPos(nsp.x));
     percentChangedEvent();
 }
@@ -421,7 +424,7 @@ void Slider::onTouchCancelled(Touch *touch, Event *unusedEvent)
 
 float Slider::getPercentWithBallPos(float px)
 {
-    return (((px-(-_barLength/2.0f))/_barLength)*100.0f);
+    return ((px/_barLength)*100.0f);
 }
 
 void Slider::addEventListenerSlider(Ref *target, SEL_SlidPercentChangedEvent selector)
@@ -446,11 +449,25 @@ int Slider::getPercent()
 void Slider::onSizeChanged()
 {
     Widget::onSizeChanged();
-    barRendererScaleChangedWithSize();
-    progressBarRendererScaleChangedWithSize();
+    _barRendererAdaptDirty = true;
+    _progressBarRendererDirty = true;
+}
+    
+void Slider::adaptRenderers()
+{
+    if (_barRendererAdaptDirty)
+    {
+        barRendererScaleChangedWithSize();
+        _barRendererAdaptDirty = false;
+    }
+    if (_progressBarRendererDirty)
+    {
+        progressBarRendererScaleChangedWithSize();
+        _progressBarRendererDirty = false;
+    }
 }
 
-const Size& Slider::getContentSize() const
+const Size& Slider::getVirtualRendererSize() const
 {
     return _barRenderer->getContentSize();
 }
@@ -466,7 +483,6 @@ void Slider::barRendererScaleChangedWithSize()
     {
         
         _barRenderer->setScale(1.0f);
-        _size = _barRenderer->getContentSize();
         _barLength = _size.width;
     }
     else
@@ -490,6 +506,7 @@ void Slider::barRendererScaleChangedWithSize()
             _barRenderer->setScaleY(bscaleY);
         }
     }
+    _barRenderer->setPosition(_contentSize.width / 2.0f, _contentSize.height / 2.0f);
     setPercent(_percent);
 }
 
@@ -527,7 +544,7 @@ void Slider::progressBarRendererScaleChangedWithSize()
             _progressBarRenderer->setScaleY(pscaleY);
         }
     }
-    _progressBarRenderer->setPosition(Point(-_barLength * 0.5f, 0.0f));
+    _progressBarRenderer->setPosition(0.0f, _contentSize.height / 2.0f);
     setPercent(_percent);
 }
 

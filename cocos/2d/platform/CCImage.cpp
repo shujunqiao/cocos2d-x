@@ -25,7 +25,7 @@ THE SOFTWARE.
 
 
 #include "CCImage.h"
-#include "CCData.h"
+#include "base/CCData.h"
 
 #include <string>
 #include <ctype.h>
@@ -50,7 +50,7 @@ extern "C"
 #include "decode.h"
 #endif
 
-#include "ccMacros.h"
+#include "2d/ccMacros.h"
 #include "CCCommon.h"
 #include "CCStdC.h"
 #include "CCFileUtils.h"
@@ -942,7 +942,14 @@ bool Image::initWithPngData(const unsigned char * data, ssize_t dataLen)
 
         _dataLen = rowbytes * _height;
         _data = static_cast<unsigned char*>(malloc(_dataLen * sizeof(unsigned char)));
-        CC_BREAK_IF(!_data);
+        if(!_data)
+        {
+            if (row_pointers != nullptr)
+            {
+                free(row_pointers);
+            }
+            break;
+        }
 
         for (unsigned short i = 0; i < _height; ++i)
         {
@@ -957,7 +964,7 @@ bool Image::initWithPngData(const unsigned char * data, ssize_t dataLen)
         if (row_pointers != nullptr)
         {
             free(row_pointers);
-        };
+        }
 
         bRet = true;
     } while (0);
@@ -2028,6 +2035,9 @@ bool Image::saveImageToPNG(const std::string& filePath, bool isToRGB)
                 {
                     fclose(fp);
                     png_destroy_write_struct(&png_ptr, &info_ptr);
+                    
+                    free(row_pointers);
+                    row_pointers = nullptr;
                     break;
                 }
 

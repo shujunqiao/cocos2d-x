@@ -57,6 +57,7 @@ def autotest(type):
 			lastTestInfo = data
 		if not data: break
 	
+	soc.send('director end\r\n')
 	print 'test end and close socket.'
 	soc.close()
 

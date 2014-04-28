@@ -22,26 +22,31 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "renderer/CCRenderer.h"
-#include "renderer/CCQuadCommand.h"
-#include "renderer/CCBatchCommand.h"
-#include "renderer/CCCustomCommand.h"
-#include "renderer/CCGroupCommand.h"
-#include "CCShaderCache.h"
-#include "ccGLStateCache.h"
-#include "CCConfiguration.h"
-#include "CCDirector.h"
-#include "CCEventDispatcher.h"
-#include "CCEventListenerCustom.h"
-#include "CCEventType.h"
+#include "2d/renderer/CCRenderer.h"
+
 #include <algorithm>
+
+#include "2d/renderer/CCQuadCommand.h"
+#include "2d/renderer/CCBatchCommand.h"
+#include "2d/renderer/CCCustomCommand.h"
+#include "2d/renderer/CCGroupCommand.h"
+#include "CCShaderCache.h"
+#include "2d/ccGLStateCache.h"
+#include "CCConfiguration.h"
+#include "2d/CCDirector.h"
+#include "2d/CCEventDispatcher.h"
+#include "2d/CCEventListenerCustom.h"
+#include "2d/CCEventType.h"
 
 NS_CC_BEGIN
 
-bool compareRenderCommand(RenderCommand* a, RenderCommand* b)
+// helper
+static bool compareRenderCommand(RenderCommand* a, RenderCommand* b)
 {
     return a->getGlobalOrder() < b->getGlobalOrder();
 }
+
+// queue
 
 void RenderQueue::push_back(RenderCommand* command)
 {
@@ -92,20 +97,25 @@ void RenderQueue::clear()
     _queuePosZ.clear();
 }
 
+//
+//
+//
+static const int DEFAULT_RENDER_QUEUE = 0;
 
 //
+// constructors, destructors, init
 //
-//
-#define DEFAULT_RENDER_QUEUE 0
-
 Renderer::Renderer()
 :_lastMaterialID(0)
 ,_numQuads(0)
 ,_glViewAssigned(false)
+,_isRendering(false)
 #if CC_ENABLE_CACHE_TEXTURE_DATA
 ,_cacheTextureListener(nullptr)
 #endif
 {
+    _groupCommandManager = new GroupCommandManager();
+    
     _commandGroupStack.push(DEFAULT_RENDER_QUEUE);
     
     RenderQueue defaultRenderQueue;
@@ -116,6 +126,7 @@ Renderer::Renderer()
 Renderer::~Renderer()
 {
     _renderGroups.clear();
+    _groupCommandManager->release();
     
     glDeleteBuffers(2, _buffersVBO);
     
@@ -236,6 +247,7 @@ void Renderer::addCommand(RenderCommand* command)
 
 void Renderer::addCommand(RenderCommand* command, int renderQueue)
 {
+    CCASSERT(!_isRendering, "Cannot add command while rendering");
     CCASSERT(renderQueue >=0, "Invalid render queue");
     CCASSERT(command->getType() != RenderCommand::Type::UNKNOWN_COMMAND, "Invalid Command Type");
     _renderGroups[renderQueue].push_back(command);
@@ -243,11 +255,13 @@ void Renderer::addCommand(RenderCommand* command, int renderQueue)
 
 void Renderer::pushGroup(int renderQueueID)
 {
+    CCASSERT(!_isRendering, "Cannot change render queue while rendering");
     _commandGroupStack.push(renderQueueID);
 }
 
 void Renderer::popGroup()
 {
+    CCASSERT(!_isRendering, "Cannot change render queue while rendering");
     _commandGroupStack.pop();
 }
 
@@ -261,7 +275,8 @@ int Renderer::createRenderQueue()
 void Renderer::visitRenderQueue(const RenderQueue& queue)
 {
     ssize_t size = queue.size();
-    for (auto index = 0; index < size; ++index)
+    
+    for (ssize_t index = 0; index < size; ++index)
     {
         auto command = queue[index];
         auto commandType = command->getType();
@@ -316,7 +331,8 @@ void Renderer::render()
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //TODO setup camera or MVP
-
+    _isRendering = true;
+    
     if (_glViewAssigned)
     {
         // cleanup
@@ -332,6 +348,7 @@ void Renderer::render()
         flush();
     }
     clean();
+    _isRendering = false;
 }
 
 void Renderer::clean()
@@ -354,26 +371,25 @@ void Renderer::clean()
     _lastMaterialID = 0;
 }
 
-void Renderer::convertToWorldCoordinates(V3F_C4B_T2F_Quad* quads, ssize_t quantity, const kmMat4& modelView)
+void Renderer::convertToWorldCoordinates(V3F_C4B_T2F_Quad* quads, ssize_t quantity, const Matrix& modelView)
 {
 //    kmMat4 matrixP, mvp;
 //    kmGLGetMatrix(KM_GL_PROJECTION, &matrixP);
 //    kmMat4Multiply(&mvp, &matrixP, &modelView);
-
-    for(ssize_t i=0; i<quantity; ++i) {
+    for(ssize_t i=0; i<quantity; ++i)
+    {
         V3F_C4B_T2F_Quad *q = &quads[i];
+        Vector3 *vec1 = (Vector3*)&q->bl.vertices;
+        modelView.transformPoint(vec1);
 
-        kmVec3 *vec1 = (kmVec3*)&q->bl.vertices;
-        kmVec3Transform(vec1, vec1, &modelView);
+        Vector3 *vec2 = (Vector3*)&q->br.vertices;
+        modelView.transformPoint(vec2);
 
-        kmVec3 *vec2 = (kmVec3*)&q->br.vertices;
-        kmVec3Transform(vec2, vec2, &modelView);
+        Vector3 *vec3 = (Vector3*)&q->tr.vertices;
+        modelView.transformPoint(vec3);
 
-        kmVec3 *vec3 = (kmVec3*)&q->tr.vertices;
-        kmVec3Transform(vec3, vec3, &modelView);
-
-        kmVec3 *vec4 = (kmVec3*)&q->tl.vertices;
-        kmVec3Transform(vec4, vec4, &modelView);
+        Vector3 *vec4 = (Vector3*)&q->tl.vertices;
+        modelView.transformPoint(vec4);
     }
 }
 
@@ -485,6 +501,38 @@ void Renderer::flush()
 {
     drawBatchedQuads();
     _lastMaterialID = 0;
+}
+
+// helpers
+
+bool Renderer::checkVisibility(const Matrix &transform, const Size &size)
+{
+    // half size of the screen
+    Size screen_half = Director::getInstance()->getWinSize();
+    screen_half.width /= 2;
+    screen_half.height /= 2;
+
+    float hSizeX = size.width/2;
+    float hSizeY = size.height/2;
+
+    Vector4 v4world, v4local;
+    v4local.set(hSizeX, hSizeY, 0, 1);
+    transform.transformVector(v4local, &v4world);
+
+    // center of screen is (0,0)
+    v4world.x -= screen_half.width;
+    v4world.y -= screen_half.height;
+
+    // convert content size to world coordinates
+    float wshw = std::max(fabsf(hSizeX * transform.m[0] + hSizeY * transform.m[4]), fabsf(hSizeX * transform.m[0] - hSizeY * transform.m[4]));
+    float wshh = std::max(fabsf(hSizeX * transform.m[1] + hSizeY * transform.m[5]), fabsf(hSizeX * transform.m[1] - hSizeY * transform.m[5]));
+
+    // compare if it in the positive quadrant of the screen
+    float tmpx = (fabsf(v4world.x)-wshw);
+    float tmpy = (fabsf(v4world.y)-wshh);
+    bool ret = (tmpx < screen_half.width && tmpy < screen_half.height);
+
+    return ret;
 }
 
 NS_CC_END

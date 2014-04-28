@@ -114,11 +114,11 @@
 --------------------------------
 -- @function [parent=#Slider] hitTest 
 -- @param self
--- @param #point_table point
+-- @param #cc.math::Vector2 array
 -- @return bool#bool ret (return value: bool)
         
 --------------------------------
--- @function [parent=#Slider] getContentSize 
+-- @function [parent=#Slider] getVirtualRendererSize 
 -- @param self
 -- @return size_table#size_table ret (return value: size_table)
         

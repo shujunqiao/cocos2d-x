@@ -6,7 +6,7 @@
 --------------------------------
 -- @function [parent=#Layout] setBackGroundColorVector 
 -- @param self
--- @param #point_table point
+-- @param #cc.math::Vector2 array
         
 --------------------------------
 -- @function [parent=#Layout] setClippingType 
@@ -26,7 +26,7 @@
 --------------------------------
 -- @function [parent=#Layout] getBackGroundColorVector 
 -- @param self
--- @return point_table#point_table ret (return value: point_table)
+-- @return math::Vector2#math::Vector2 ret (return value: cc.math::Vector2)
         
 --------------------------------
 -- @function [parent=#Layout] getClippingType 
@@ -136,12 +136,6 @@
 -- @function [parent=#Layout] getBackGroundStartColor 
 -- @param self
 -- @return color3B_table#color3B_table ret (return value: color3B_table)
-        
---------------------------------
--- @function [parent=#Layout] hitTest 
--- @param self
--- @param #point_table point
--- @return bool#bool ret (return value: bool)
         
 --------------------------------
 -- @function [parent=#Layout] setBackGroundImageScale9Enabled 

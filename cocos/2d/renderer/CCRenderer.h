@@ -26,9 +26,9 @@
 #ifndef __CC_RENDERER_H_
 #define __CC_RENDERER_H_
 
-#include "CCPlatformMacros.h"
+#include "base/CCPlatformMacros.h"
 #include "CCRenderCommand.h"
-#include "CCGLProgram.h"
+#include "2d/CCGLProgram.h"
 #include "CCGL.h"
 #include <vector>
 #include <stack>
@@ -63,6 +63,8 @@ struct RenderStackElement
     int renderQueueID;
     ssize_t currentIndex;
 };
+
+class GroupCommandManager;
 
 /* Class responsible for the rendering in.
 
@@ -110,6 +112,11 @@ public:
     /* RenderCommands (except) QuadCommand should update this value */
     void addDrawnVertices(ssize_t number) { _drawnVertices += number; };
 
+    inline GroupCommandManager* getGroupCommandManager() const { return _groupCommandManager; };
+
+    /** returns whether or not a rectangle is visible or not */
+    bool checkVisibility(const Matrix& transform, const Size& size);
+
 protected:
 
     void setupIndices();
@@ -126,7 +133,7 @@ protected:
     
     void visitRenderQueue(const RenderQueue& queue);
 
-    void convertToWorldCoordinates(V3F_C4B_T2F_Quad* quads, ssize_t quantity, const kmMat4& modelView);
+    void convertToWorldCoordinates(V3F_C4B_T2F_Quad* quads, ssize_t quantity, const Matrix& modelView);
 
     std::stack<int> _commandGroupStack;
     
@@ -148,6 +155,10 @@ protected:
     // stats
     ssize_t _drawnBatches;
     ssize_t _drawnVertices;
+    //the flag for checking whether renderer is rendering
+    bool _isRendering;
+    
+    GroupCommandManager* _groupCommandManager;
     
 #if CC_ENABLE_CACHE_TEXTURE_DATA
     EventListenerCustom* _cacheTextureListener;

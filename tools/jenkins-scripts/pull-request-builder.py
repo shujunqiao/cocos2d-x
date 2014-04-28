@@ -76,7 +76,7 @@ def main():
 
     #reset path to workspace root
     os.system("cd " + os.environ['WORKSPACE']);
-    os.system("git checkout develop")
+    os.system("git checkout v3")
     os.system("git branch -D pull" + str(pr_num))
     #clean workspace
     print "Before checkout: git clean -xdf -f"    
@@ -102,9 +102,9 @@ def main():
         return(2)
 
     # Generate binding glue codes
-    if(branch == 'develop'):
+    if(branch == 'v3'):
       ret = os.system("python tools/jenkins-scripts/gen_jsb.py")
-    elif(branch == 'master'):
+    elif(branch == 'v2'):
       os.chdir('tools/tojs')
       if(platform.system() == 'Windows'):
         os.environ['NDK_ROOT'] = os.environ['NDK_ROOT_R8E']
@@ -139,10 +139,29 @@ def main():
     #TODO: add android-linux build
     #TODO: add mac build
     node_name = os.environ['NODE_NAME']
-    if(branch == 'develop'):
+    if(branch == 'v3'):
       if(node_name == 'android_mac') or (node_name == 'android_win7'):
+        #modify tests/cpp-empty-test/Classes/AppDelegate.cpp to support Console
+        modify_file = 'tests/cpp-empty-test/Classes/AppDelegate.cpp'
+        data = codecs.open(modify_file, encoding='UTF-8').read()
+        data = re.sub("director->setDisplayStats\(true\);", "director->setDisplayStats(true); director->getConsole()->listenOnTCP(5678);", data)
+        codecs.open(modify_file, 'wb', encoding='UTF-8').write(data)
+        #modify tests/cpp-empty-test/proj.android/AndroidManifest.xml to support Console
+        modify_file = 'tests/cpp-empty-test/proj.android/AndroidManifest.xml'
+        data = codecs.open(modify_file, encoding='UTF-8').read()
+        data = re.sub('<uses-feature android:glEsVersion="0x00020000" />', '<uses-feature android:glEsVersion="0x00020000" /> <uses-permission android:name="android.permission.INTERNET"/>', data)
+        codecs.open(modify_file, 'wb', encoding='UTF-8').write(data)
         print "Start build android..."
         ret = os.system("python build/android-build.py -n -j10 all")
+        # create and save apk
+        if(ret == 0):
+          sample_dir = 'tests/cpp-empty-test/proj.android/'
+          os.system('android update project -p cocos/2d/platform/android/java/ -t android-13')
+          os.system('android update project -p ' + sample_dir + ' -t android-13')
+          os.system('ant debug -f ' + sample_dir + 'build.xml')
+          local_apk = sample_dir + 'bin/CppEmptyTest-debug.apk'
+          remote_apk = 'apks/cpp_empty_test/cpp_empty_test_' + str(pr_num) + '.apk'
+          os.system('tools/jenkins-scripts/upload_apk.sh ' + local_apk + ' ' + remote_apk)
       elif(node_name == 'win32_win7'):
         ret = subprocess.call('"%VS110COMNTOOLS%..\IDE\devenv.com" "build\cocos2d-win32.vc2012.sln" /Build "Debug|Win32"', shell=True)
       elif(node_name == 'ios_mac'):
@@ -152,7 +171,7 @@ def main():
         ret = os.system("cmake ../")
         ret = os.system("make -j10")
         os.chdir("../")
-    elif(branch == 'master'):
+    elif(branch == 'v2'):
       SAMPLES_DIRS = ['Cpp/HelloCpp', 'Cpp/SimpleGame', 'Cpp/TestCpp', 'Javascript/TestJavascript', 'Lua/HelloLua', 'Lua/TestLua']
       SAMPLES_NAMES = ['HelloCpp', 'SimpleGame', 'TestCpp', 'TestJavascript', 'HelloLua', 'TestLua']
       if(node_name == 'android_mac'):
@@ -196,7 +215,7 @@ def main():
     os.system("cd " + os.environ['WORKSPACE'])
     os.system("git reset --hard")
     os.system("git clean -xdf -f")
-    os.system("git checkout develop")
+    os.system("git checkout v3")
     os.system("git branch -D pull" + str(pr_num))
 
     return(exit_code)

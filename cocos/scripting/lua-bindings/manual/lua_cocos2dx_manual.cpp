@@ -5085,8 +5085,8 @@ static int lua_cocos2dx_Label_createWithTTF01(lua_State* L)
             {
                 luaval_to_size(L, 5, &dimensions);
             }
-            TextHAlignment hAlignment = static_cast<TextHAlignment>(tolua_tonumber(L, 6, 0));
-            TextVAlignment vAlignment = static_cast<TextVAlignment>(tolua_tonumber(L, 7, 0));
+            TextHAlignment hAlignment = static_cast<TextHAlignment>((int)tolua_tonumber(L, 6, 0));
+            TextVAlignment vAlignment = static_cast<TextVAlignment>((int)tolua_tonumber(L, 7, 0));
             
             cocos2d::Label* ret = cocos2d::Label::createWithTTF(text, fontFile, fontSize, dimensions, hAlignment, vAlignment);
             
@@ -5129,16 +5129,16 @@ static int lua_cocos2dx_Label_create_deprecated(lua_State* tolua_S)
         else
         {
             CCLOG("The create(text, ...) was deprecated,please use create createWithTTF(text, ...) instead");
-            std::string text = tolua_tostring(tolua_S, 2, "");
-            std::string fontFile = tolua_tostring(tolua_S, 3, "");
+            std::string text = tolua_tocppstring(tolua_S, 2, "");
+            std::string fontFile = tolua_tocppstring(tolua_S, 3, "");
             float fontSize   = tolua_tonumber(tolua_S, 4, 0);
             cocos2d::Size dimensions = cocos2d::Size::ZERO;
             if (lua_istable(tolua_S, 5))
             {
                 luaval_to_size(tolua_S, 5, &dimensions);
             }
-            TextHAlignment hAlignment = static_cast<TextHAlignment>(tolua_tonumber(tolua_S, 6, 0));
-            TextVAlignment vAlignment = static_cast<TextVAlignment>(tolua_tonumber(tolua_S, 7, 0));
+            TextHAlignment hAlignment = static_cast<TextHAlignment>((int)tolua_tonumber(tolua_S, 6, 0));
+            TextVAlignment vAlignment = static_cast<TextVAlignment>((int)tolua_tonumber(tolua_S, 7, 0));
             
             cocos2d::Label* ret = cocos2d::Label::create(text, fontFile, fontSize, dimensions, hAlignment, vAlignment);
             
@@ -5325,7 +5325,9 @@ static int lua_cocos2dx_Console_addCommand(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"cc.Console",0,&tolua_err)) goto tolua_lerror;
 #endif
+    
     cobj = (cocos2d::Console*)tolua_tousertype(tolua_S,1,0);
+    
 #if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
@@ -5343,7 +5345,12 @@ static int lua_cocos2dx_Console_addCommand(lua_State* tolua_S)
         std::string name = std::string(arg0["name"].asString());
         std::string help = std::string(arg0["help"].asString());
         
-        ok &= toluafix_isfunction(tolua_S,3,"LUA_FUNCTION",0,&tolua_err);
+#if COCOS2D_DEBUG >= 1
+        if (!toluafix_isfunction(tolua_S, 3, "LUA_FUNCTION", 0, &tolua_err))
+        {
+            goto tolua_lerror;
+        }
+#endif
         LUA_FUNCTION handler = 0;
         if (ok) {
             handler = (  toluafix_ref_function(tolua_S,3,0));

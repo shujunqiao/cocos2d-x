@@ -31,7 +31,6 @@ end
 
 -- back menu callback
 local function MainMenuCallback()
-    Helper.usePhysics = false
     local scene = cc.Scene:create()
     scene:addChild(CreateTestMenu())
 
@@ -40,7 +39,7 @@ end
 
 -- add the menu item for back to main menu
 function CreateBackMenuItem()
-    local label = cc.Label:create("MainMenu", s_arialPath, 20)
+    local label = cc.Label:createWithTTF("MainMenu", s_arialPath, 20)
     label:setAnchorPoint(cc.p(0.5, 0.5))
     local MenuItem = cc.MenuItemLabel:create(label)
     MenuItem:registerScriptTapHandler(MainMenuCallback)
@@ -84,12 +83,7 @@ function Helper.restartAction()
 end
 
 function Helper.newScene()
-    local scene
-    if Helper.usePhysics then
-       scene = cc.Scene:createWithPhysics()
-    else
-       scene = cc.Scene:create()
-    end
+    local scene = cc.Scene:create()
     Helper.currentLayer = Helper.createFunctionTable[Helper.index]()
     scene:addChild(Helper.currentLayer)
     scene:addChild(CreateBackMenuItem())
@@ -101,12 +95,12 @@ function Helper.initWithLayer(layer)
     Helper.currentLayer = layer
 
     local size = cc.Director:getInstance():getWinSize()
-    Helper.titleLabel = cc.Label:create("", s_arialPath, 28)
+    Helper.titleLabel = cc.Label:createWithTTF("", s_arialPath, 28)
     Helper.titleLabel:setAnchorPoint(cc.p(0.5, 0.5))
     layer:addChild(Helper.titleLabel, 1)
     Helper.titleLabel:setPosition(size.width / 2, size.height - 50)
 
-    Helper.subtitleLabel = cc.Label:create("", s_thonburiPath, 16)
+    Helper.subtitleLabel = cc.Label:createWithTTF("", s_thonburiPath, 16)
     Helper.subtitleLabel:setAnchorPoint(cc.p(0.5, 0.5))
     layer:addChild(Helper.subtitleLabel, 1)
     Helper.subtitleLabel:setPosition(size.width / 2, size.height - 80)
