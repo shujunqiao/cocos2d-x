@@ -11,6 +11,7 @@ import sys
 import json
 import time
 import socket
+import threading
 import smtplib
 from email.mime.text import MIMEText
 from os.path import join, getsize
@@ -61,7 +62,7 @@ if cocos_param < LEVEL_COCOS[ENUM_PARAM.new]:
 print 'cocos_param:', cocos_param
 
 # project types
-project_types = ['lua']
+project_types = ['cpp', 'lua']
 # project suffix
 PROJ_SUFFIX = 'Proj'
 # different phone platform
@@ -163,7 +164,7 @@ def close_proj(proj, phone):
 				cmd = 'director end\r\n'
 				print 'cmd close:', cmd
 				soc.send(cmd)
-				time.sleep(2) 
+				time.sleep(2)
 				strClose = strClose + ' success.'
 				break
 			except Exception, e:
@@ -182,6 +183,30 @@ def close_proj(proj, phone):
 def appendToResult(content):
 	global console_result
 	console_result = console_result + content
+
+info_of_close_app = {}
+cur_test_name = ''
+class myThread(threading.Thread):
+    def __init__(self,threadname):
+        threading.Thread.__init__(self,name=threadname)
+    def run(self):
+        run_name = self.getName()
+        print 'run_name:', run_name
+        if run_name == 'close':
+        	while True:
+        		soc = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
+        		try:
+        			soc.connect(('localhost', PORT))
+        			cmd_close = 'director end\r\n'
+        			print 'cmd close:', cmd_close
+        			soc.send(cmd_close)
+        			time.sleep(2)
+        			global cur_test_name
+        			print 'cur_test_name:', cur_test_name
+        			info_of_close_app[cur_test_name] = True
+        			break
+        		except Exception, e:
+					time.sleep(5)
 
 # if any error 
 ANY_ERROR_IN_RUN = 0
@@ -220,17 +245,16 @@ def cocos_project(level):
 							strInfo = 'no android device, please checkout the device is running ok.'
 							print strInfo
 						else:
-							info_cmd = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-							info_run = False
 							if level == ENUM_PARAM.run:
-								time.sleep(5)
-								strClose = close_proj(proj, phone)
-								appendToResult('	'+strClose+"\n\r\t")
-								result_run = info_cmd.stdout.read()
-								if result_run.find('cocos2d.x.version:') > 0:
-									info_run = True
-							info_cmd.kill()
-							appendToResult('	'+cmd +': ' + str(info_run) + ".\n\r\t")
+								global cur_test_name
+								cur_test_name = proj+','+phone
+								thread_close = myThread('close')
+								thread_close.start()
+							else:
+								print 'will add deploy.'
+							info_cmd = os.system(cmd)
+							time.sleep(5)
+							appendToResult('	'+cmd +': ' + str(not info_cmd) + ".\n\r\t")
 
 # build and run according to params of provided.(lv_ignore: e.g:ignore new)
 def build_run(lv_ignore):
@@ -343,7 +367,7 @@ def main():
 	print 'in main:'
 	# start_android_simulator()
 	print 'will build_run:'
-	build_run(-1)
+	build_run(2)
 	print 'ANY_ERROR_IN_RUN:', ANY_ERROR_IN_RUN
 	print 'end build run. and get package size.'
 	getPackageSize()
