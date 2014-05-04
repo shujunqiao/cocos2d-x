@@ -30,13 +30,13 @@ THE SOFTWARE.
 
 #include "2d/CCNode.h"
 #include "2d/CCProtocols.h"
-#include "2d/CCEventTouch.h"
+#include "base/CCEventTouch.h"
 #ifdef EMSCRIPTEN
 #include "CCGLBufferedNode.h"
 #endif // EMSCRIPTEN
 
-#include "2d/CCEventKeyboard.h"
-#include "2d/renderer/CCCustomCommand.h"
+#include "base/CCEventKeyboard.h"
+#include "renderer/CCCustomCommand.h"
 
 #include "physics/CCPhysicsWorld.h"
 
@@ -170,27 +170,6 @@ CC_CONSTRUCTOR_ACCESS:
     virtual ~Layer();
 
     virtual bool init() override;
-
-#if CC_USE_PHYSICS
-public:
-    virtual void updatePhysics(float delta);
-    virtual void onEnter() override;
-    virtual void onExit() override;
-
-    inline PhysicsWorld* getPhysicsWorld() { return _physicsWorld; }
-    static Layer *createWithPhysics();
-
-CC_CONSTRUCTOR_ACCESS:
-    bool initWithPhysics();
-
-protected:
-    void addChildToPhysicsWorld(Node* child);
-
-    PhysicsWorld* _physicsWorld;
-
-    friend class Node;
-    friend class ProtectedNode;
-#endif // CC_USE_PHYSICS
 
 protected:
     //add the api for avoid use deprecated api

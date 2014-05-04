@@ -32,26 +32,26 @@ THE SOFTWARE.
 
 #include "deprecated/CCString.h"
 #include "2d/ccCArray.h"
-#include "TransformUtils.h"
-#include "CCGrid.h"
-#include "2d/CCDirector.h"
-#include "CCScheduler.h"
-#include "2d/CCTouch.h"
+#include "math/TransformUtils.h"
+#include "2d/CCGrid.h"
+#include "base/CCDirector.h"
+#include "base/CCScheduler.h"
+#include "base/CCTouch.h"
 #include "2d/CCActionManager.h"
 #include "2d/CCScriptSupport.h"
 #include "2d/CCGLProgram.h"
-#include "2d/CCEventDispatcher.h"
-#include "2d/CCEvent.h"
-#include "2d/CCEventTouch.h"
-#include "2d/CCLayer.h"
+#include "base/CCEventDispatcher.h"
+#include "base/CCEvent.h"
+#include "base/CCEventTouch.h"
+#include "2d/CCScene.h"
 
 #if CC_USE_PHYSICS
 #include "physics/CCPhysicsBody.h"
 #endif
 
 // externals
-#include "CCComponent.h"
-#include "CCComponentContainer.h"
+#include "2d/CCComponent.h"
+#include "2d/CCComponentContainer.h"
 
 
 
@@ -267,8 +267,8 @@ void Node::setRotation(float rotation)
 #if CC_USE_PHYSICS
     if (_physicsBody && !_physicsBody->_rotationResetTag)
     {
-        Layer* layer = _physicsBody->getWorld() != nullptr ? &_physicsBody->getWorld()->getLayer() : nullptr;
-        updatePhysicsBodyRotation(layer);
+        Scene* scene = _physicsBody->getWorld() != nullptr ? &_physicsBody->getWorld()->getScene() : nullptr;
+        updatePhysicsBodyRotation(scene);
     }
 #endif
 }
@@ -296,8 +296,8 @@ void Node::setRotation3D(const Vector3& rotation)
 #if CC_USE_PHYSICS
     if (_physicsBody)
     {
-        Layer* layer = _physicsBody->getWorld() != nullptr ? &_physicsBody->getWorld()->getLayer() : nullptr;
-        updatePhysicsBodyRotation(layer);
+        Scene* scene = _physicsBody->getWorld() != nullptr ? &_physicsBody->getWorld()->getScene() : nullptr;
+        updatePhysicsBodyRotation(scene);
     }
 #endif
 }
@@ -428,8 +428,8 @@ void Node::setPosition(const Vector2& position)
 #if CC_USE_PHYSICS
     if (_physicsBody != nullptr && !_physicsBody->_positionResetTag)
     {
-        Layer* layer = _physicsBody->getWorld() != nullptr ? &_physicsBody->getWorld()->getLayer() : nullptr;
-        updatePhysicsBodyPosition(layer);
+        Scene* scene = _physicsBody->getWorld() != nullptr ? &_physicsBody->getWorld()->getScene() : nullptr;
+        updatePhysicsBodyPosition(scene);
     }
 #endif
 }
@@ -734,10 +734,10 @@ void Node::addChild(Node *child, int zOrder, int tag)
     // Recursive add children with which have physics body.
     for (Node* node = this; node != nullptr; node = node->getParent())
     {
-        Layer* layer = dynamic_cast<Layer*>(node);
-        if (layer != nullptr && layer->getPhysicsWorld() != nullptr)
+        Scene* scene = dynamic_cast<Scene*>(node);
+        if (scene != nullptr && scene->getPhysicsWorld() != nullptr)
         {
-            layer->addChildToPhysicsWorld(child);
+            scene->addChildToPhysicsWorld(child);
             break;
         }
     }
@@ -1378,7 +1378,7 @@ const Matrix& Node::getNodeToParentTransform() const
         }
         if(_rotationX) {
             Matrix rotX;
-            Matrix::createRotationY(CC_DEGREES_TO_RADIANS(_rotationX), &rotX);
+            Matrix::createRotationX(CC_DEGREES_TO_RADIANS(_rotationX), &rotX);
             _transform = _transform * rotX;
         }
 
@@ -1452,7 +1452,7 @@ AffineTransform Node::getParentToNodeAffineTransform() const
 const Matrix& Node::getParentToNodeTransform() const
 {
     if ( _inverseDirty ) {
-        _transform.invert(&_inverse);
+        _inverse = _transform.getInversed();
         _inverseDirty = false;
     }
 
@@ -1489,9 +1489,7 @@ AffineTransform Node::getWorldToNodeAffineTransform() const
 
 Matrix Node::getWorldToNodeTransform() const
 {
-    Matrix result = getNodeToWorldTransform();
-    result.invert();
-    return result;
+    return getNodeToWorldTransform().getInversed();
 }
 
 
@@ -1582,13 +1580,13 @@ void Node::removeAllComponents()
 
 #if CC_USE_PHYSICS
 
-void Node::updatePhysicsBodyPosition(Layer* layer)
+void Node::updatePhysicsBodyPosition(Scene* scene)
 {
     if (_physicsBody != nullptr)
     {
-        if (layer != nullptr && layer->getPhysicsWorld() != nullptr)
+        if (scene != nullptr && scene->getPhysicsWorld() != nullptr)
         {
-            Point pos = getParent() == layer ? getPosition() : layer->convertToNodeSpace(_parent->convertToWorldSpace(getPosition()));
+            Vector2 pos = getParent() == scene ? getPosition() : scene->convertToNodeSpace(_parent->convertToWorldSpace(getPosition()));
             _physicsBody->setPosition(pos);
         }
         else
@@ -1598,14 +1596,14 @@ void Node::updatePhysicsBodyPosition(Layer* layer)
     }
 }
 
-void Node::updatePhysicsBodyRotation(Layer* layer)
+void Node::updatePhysicsBodyRotation(Scene* scene)
 {
     if (_physicsBody != nullptr)
     {
-        if (layer != nullptr && layer->getPhysicsWorld() != nullptr)
+        if (scene != nullptr && scene->getPhysicsWorld() != nullptr)
         {
             float rotation = _rotationZ_X;
-            for (Node* parent = _parent; parent != layer; parent = parent->getParent())
+            for (Node* parent = _parent; parent != scene; parent = parent->getParent())
             {
                 rotation += parent->getRotation();
             }
@@ -1652,19 +1650,19 @@ void Node::setPhysicsBody(PhysicsBody* body)
     if (body != nullptr)
     {
         Node* node;
-        Layer* layer = nullptr;
+        Scene* scene = nullptr;
         for (node = this->getParent(); node != nullptr; node = node->getParent())
         {
-            Layer* tmpLayer = dynamic_cast<Layer*>(node);
-            if (tmpLayer != nullptr && tmpLayer->getPhysicsWorld() != nullptr)
+            Scene* tmpScene = dynamic_cast<Scene*>(node);
+            if (tmpScene != nullptr && tmpScene->getPhysicsWorld() != nullptr)
             {
-                layer = tmpLayer;
+                scene = tmpScene;
                 break;
             }
         }
         
-        updatePhysicsBodyPosition(layer);
-        updatePhysicsBodyRotation(layer);
+        updatePhysicsBodyPosition(scene);
+        updatePhysicsBodyRotation(scene);
     }
 }
 

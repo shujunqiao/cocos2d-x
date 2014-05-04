@@ -27,24 +27,24 @@ THE SOFTWARE.
 
 #include <stdarg.h>
 #include "2d/CCLayer.h"
-#include "2d/CCDirector.h"
+#include "base/CCDirector.h"
 #include "2d/CCScriptSupport.h"
-#include "CCShaderCache.h"
+#include "2d/CCShaderCache.h"
 #include "2d/CCGLProgram.h"
 #include "2d/ccGLStateCache.h"
-#include "TransformUtils.h"
+#include "math/TransformUtils.h"
 // extern
-#include "2d/CCEventDispatcher.h"
-#include "2d/CCEventListenerTouch.h"
-#include "2d/CCEventTouch.h"
-#include "2d/CCEventKeyboard.h"
-#include "2d/CCEventListenerKeyboard.h"
-#include "2d/CCEventAcceleration.h"
-#include "2d/CCEventListenerAcceleration.h"
+#include "base/CCEventDispatcher.h"
+#include "base/CCEventListenerTouch.h"
+#include "base/CCEventTouch.h"
+#include "base/CCEventKeyboard.h"
+#include "base/CCEventListenerKeyboard.h"
+#include "base/CCEventAcceleration.h"
+#include "base/CCEventListenerAcceleration.h"
 #include "2d/platform/CCDevice.h"
-#include "CCScene.h"
-#include "2d/renderer/CCCustomCommand.h"
-#include "2d/renderer/CCRenderer.h"
+#include "2d/CCScene.h"
+#include "renderer/CCCustomCommand.h"
+#include "renderer/CCRenderer.h"
 #include "deprecated/CCString.h"
 
 #if CC_USE_PHYSICS
@@ -63,9 +63,6 @@ Layer::Layer()
 , _accelerationListener(nullptr)
 , _touchMode(Touch::DispatchMode::ALL_AT_ONCE)
 , _swallowsTouches(true)
-#if CC_USE_PHYSICS
-, _physicsWorld(nullptr)
-#endif
 {
     _ignoreAnchorPointForPosition = true;
     setAnchorPoint(Vector2(0.5f, 0.5f));
@@ -73,9 +70,7 @@ Layer::Layer()
 
 Layer::~Layer()
 {
-#if CC_USE_PHYSICS
-    CC_SAFE_DELETE(_physicsWorld);
-#endif
+
 }
 
 bool Layer::init()
@@ -438,93 +433,6 @@ std::string Layer::getDescription() const
 {
     return StringUtils::format("<Layer | Tag = %d>", _tag);
 }
-
-#if CC_USE_PHYSICS
-void Layer::onEnter()
-{
-    Node::onEnter();
-    
-    if (_physicsWorld != nullptr)
-    {
-        this->schedule(schedule_selector(Layer::updatePhysics));
-    }
-}
-
-void Layer::onExit()
-{
-    Node::onExit();
-    
-    if (_physicsWorld != nullptr)
-    {
-        this->unschedule(schedule_selector(Layer::updatePhysics));
-    }
-}
-
-void Layer::updatePhysics(float delta)
-{
-    if (nullptr != _physicsWorld)
-    {
-        _physicsWorld->update(delta);
-    }
-}
-
-Layer* Layer::createWithPhysics()
-{
-    Layer *ret = new Layer();
-    if (ret && ret->initWithPhysics())
-    {
-        ret->autorelease();
-        return ret;
-    }
-    else
-    {
-        CC_SAFE_DELETE(ret);
-        return nullptr;
-    }
-}
-
-bool Layer::initWithPhysics()
-{
-    bool ret = false;
-    do
-    {
-        Director * director;
-        CC_BREAK_IF( ! (director = Director::getInstance()) );
-        this->setContentSize(director->getWinSize());
-        CC_BREAK_IF(! (_physicsWorld = PhysicsWorld::construct(*this)));
-
-        // success
-        ret = true;
-    } while (0);
-    return ret;
-}
-
-void Layer::addChildToPhysicsWorld(Node* child)
-{
-    if (_physicsWorld)
-    {
-        std::function<void(Node*)> addToPhysicsWorldFunc = nullptr;
-        addToPhysicsWorldFunc = [this, &addToPhysicsWorldFunc](Node* node) -> void
-        {
-            if (node->getPhysicsBody())
-            {
-                _physicsWorld->addBody(node->getPhysicsBody());
-                
-                node->updatePhysicsBodyPosition(this);
-                node->updatePhysicsBodyRotation(this);
-            }
-            
-            auto& children = node->getChildren();
-            for( const auto &n : children) {
-                addToPhysicsWorldFunc(n);
-            }
-        };
-        
-        addToPhysicsWorldFunc(child);
-    }
-}
-#endif
-
 
 __LayerRGBA::__LayerRGBA()
 {

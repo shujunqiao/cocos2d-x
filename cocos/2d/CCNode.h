@@ -29,14 +29,14 @@
 #ifndef __CCNODE_H__
 #define __CCNODE_H__
 
-#include "2d/ccMacros.h"
-#include "base/CCAffineTransform.h"
+#include "base/ccMacros.h"
+#include "math/CCAffineTransform.h"
 #include "CCGL.h"
 #include "2d/ccGLStateCache.h"
 #include "2d/CCGLProgram.h"
 #include "2d/CCScriptSupport.h"
 #include "2d/CCProtocols.h"
-#include "2d/CCEventDispatcher.h"
+#include "base/CCEventDispatcher.h"
 #include "base/CCVector.h"
 #include "math/CCMath.h"
 
@@ -1367,8 +1367,8 @@ protected:
     virtual void updateColor() {}
     
 #if CC_USE_PHYSICS
-    virtual void updatePhysicsBodyPosition(Layer* layer);
-    virtual void updatePhysicsBodyRotation(Layer* layer);
+    virtual void updatePhysicsBodyPosition(Scene* layer);
+    virtual void updatePhysicsBodyRotation(Scene* layer);
 #endif // CC_USE_PHYSICS
 
     float _rotationX;               ///< rotation on the X-axis

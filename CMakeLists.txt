@@ -38,9 +38,6 @@ option(USE_CHIPMUNK "Use chipmunk for physics library" ON)
 option(USE_BOX2D "Use box2d for physics library" OFF)
 option(DEBUG_MODE "Debug or release?" ON)
 option(BUILD_LIBS_LUA "Build lua libraries" OFF)
-option(BUILD_GUI "Build GUI library" ON)
-option(BUILD_NETWORK "Build network library" ON)
-option(BUILD_STORAGE "Build storage library" ON)
 option(BUILD_EXTENSIONS "Build extension library" ON)
 option(BUILD_EDITOR_SPINE "Build editor support for spine" ON)
 option(BUILD_EDITOR_COCOSTUDIO "Build editor support for cocostudio" ON)
@@ -54,9 +51,6 @@ option(USE_CHIPMUNK "Use chipmunk for physics library" ON)
 option(USE_BOX2D "Use box2d for physics library" OFF)
 option(DEBUG_MODE "Debug or release?" ON)
 option(BUILD_LIBS_LUA "Build lua libraries" ON)
-option(BUILD_GUI "Build GUI library" ON)
-option(BUILD_NETWORK "Build network library" ON)
-option(BUILD_STORAGE "Build storage library" ON)
 option(BUILD_EXTENSIONS "Build extension library" ON)
 option(BUILD_EDITOR_SPINE "Build editor support for spine" ON)
 option(BUILD_EDITOR_COCOSTUDIO "Build editor support for cocostudio" ON)
@@ -137,13 +131,6 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/cocos
   ${CMAKE_CURRENT_SOURCE_DIR}/cocos/audio/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/cocos/2d
-  ${CMAKE_CURRENT_SOURCE_DIR}/cocos/2d/renderer
-  ${CMAKE_CURRENT_SOURCE_DIR}/cocos/2d/platform
-  ${CMAKE_CURRENT_SOURCE_DIR}/cocos/base
-  ${CMAKE_CURRENT_SOURCE_DIR}/cocos/math
-  ${CMAKE_CURRENT_SOURCE_DIR}/cocos/deprecated
-  ${CMAKE_CURRENT_SOURCE_DIR}/cocos/physics
   ${CMAKE_CURRENT_SOURCE_DIR}/cocos/editor-support
   ${CMAKE_CURRENT_SOURCE_DIR}/cocos/scripting/lua-bindings/auto
   ${CMAKE_CURRENT_SOURCE_DIR}/cocos/scripting/lua-bindings/manual
@@ -235,29 +222,8 @@ add_subdirectory(external/xxhash)
 # audio
 add_subdirectory(cocos/audio)
 
-# cocos base library
-add_subdirectory(cocos/base)
-
-# cocos math library
-add_subdirectory(cocos/math)
-
-# cocos 2d library
-add_subdirectory(cocos/2d)
-
-if(BUILD_STORAGE)
-# cocos storage
-add_subdirectory(cocos/storage)
-endif(BUILD_STORAGE)
-
-if(BUILD_GUI)
-# ui
-add_subdirectory(cocos/ui)
-endif(BUILD_GUI)
-
-if(BUILD_NETWORK)
-# network
-add_subdirectory(cocos/network)
-endif(BUILD_NETWORK)
+# cocos2d library
+add_subdirectory(cocos)
 
 if(BUILD_EXTENSIONS)
 # extensions
