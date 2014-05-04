@@ -61,11 +61,11 @@ if cocos_param < LEVEL_COCOS[ENUM_PARAM.new]:
 print 'cocos_param:', cocos_param
 
 # project types
-project_types = ['cpp', 'lua']
+project_types = ['lua']
 # project suffix
 PROJ_SUFFIX = 'Proj'
 # different phone platform
-phonePlats = ['mac','ios','android']
+phonePlats = ['mac', 'ios','android']
 
 # need use console's position, perhaps should be set an env-param
 cocos_console_dir = 'tools/cocos2d-console/bin/'
@@ -156,16 +156,23 @@ def close_proj(proj, phone):
 	if IP_PHONE.has_key(phone):
 		soc = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
 		print proj, phone, IP_PHONE[phone]
-		try:
-			soc.connect((IP_PHONE[phone], PORT))
-			cmd = 'director end\r\n'
-			print 'cmd close:', cmd
-			soc.send(cmd)
-			time.sleep(2) 
-			strClose = strClose + ' success.'
-		except Exception, e:
-			print 'socket is not connect.'
-			strClose = strClose + ' failed.' + ' socket is not connect.'
+		try_times = 5
+		while True:
+			try:
+				soc.connect((IP_PHONE[phone], PORT))
+				cmd = 'director end\r\n'
+				print 'cmd close:', cmd
+				soc.send(cmd)
+				time.sleep(2) 
+				strClose = strClose + ' success.'
+				break
+			except Exception, e:
+				if try_times <= 0:
+					print 'socket is not connect.'
+					strClose = strClose + ' failed.' + ' socket is not connect.'
+					break
+				time.sleep(5)
+				try_times = try_times - 1
 	else:
 		strClose = strClose + ' failed.' + ' no ' +phone+ ' type.'
 	time.sleep(2)
@@ -212,15 +219,18 @@ def cocos_project(level):
 						if phone == 'android' and getAndroidDevices() == 0:
 							strInfo = 'no android device, please checkout the device is running ok.'
 							print strInfo
-							# appendToResult('	'+strInfo+"\n\r\t")
 						else:
-							info_cmd = os.system(cmd)
-							print 'info '+COCOS_CMD[level]+':', not info_cmd
+							info_cmd = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+							info_run = False
 							if level == ENUM_PARAM.run:
-								time.sleep(20)
+								time.sleep(5)
 								strClose = close_proj(proj, phone)
 								appendToResult('	'+strClose+"\n\r\t")
-							appendToResult('	'+cmd +': ' + str(not info_cmd) + ".\n\r\t")
+								result_run = info_cmd.stdout.read()
+								if result_run.find('cocos2d.x.version:') > 0:
+									info_run = True
+							info_cmd.kill()
+							appendToResult('	'+cmd +': ' + str(info_run) + ".\n\r\t")
 
 # build and run according to params of provided.(lv_ignore: e.g:ignore new)
 def build_run(lv_ignore):
